@@ -24,14 +24,29 @@ export default function Login() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      if (email.includes("admin")) {
-        router.push("/admin");
-      } else if (email.includes("tutor")) {
-        router.push("/instructor");
-      } else {
-        router.push("/student");
+      
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = existingUsers.find((u: any) => u.email === email && u.password === password);
+      
+      if (!user && (email.includes("admin") || email.includes("tutor") || email.includes("student"))) {
+         // Fallback for mock roles if not registered (to not break dev flow)
+         let role = "student";
+         if (email.includes("admin")) role = "admin";
+         else if (email.includes("tutor")) role = "instructor";
+         const mockUser = { id: Date.now().toString(), firstName: "Demo", lastName: "User", email, password, role, phone: "" };
+         localStorage.setItem('currentUser', JSON.stringify(mockUser));
+         toast.success("Welcome back!");
+         router.push(role === "admin" ? "/admin" : role === "instructor" ? "/instructor" : "/student");
+         return;
       }
-      toast.success("Welcome back!");
+      
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        toast.success("Welcome back!");
+        router.push(user.role === "admin" ? "/admin" : user.role === "instructor" ? "/instructor" : "/student");
+      } else {
+        toast.error("Invalid email or password");
+      }
     }, 1500);
   };
 

@@ -26,6 +26,19 @@ export default function Signup() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      if (existingUsers.some((u: any) => u.email === email)) {
+        toast.error("Email already in use");
+        return;
+      }
+      
+      let role = "student";
+      if (email.includes("admin")) role = "admin";
+      else if (email.includes("tutor")) role = "instructor";
+      
+      const newUser = { id: Date.now().toString(), firstName, lastName, email, password, role, phone: "" };
+      localStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
+      
       toast.success("Account created successfully!");
       router.push("/login");
     }, 1500);

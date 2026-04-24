@@ -9,11 +9,21 @@ import {
   Zap, Award, Rocket
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function StudentDashboard() {
   const router = useRouter();
-  
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      setUser(JSON.parse(currentUser));
+    }
+  }, []);
+
+  if (!user) return null;
+
   const stats = [
     { label: "Enrolled Courses", value: "3", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
     { label: "Upcoming Classes", value: "2", icon: Calendar, color: "text-amber-500", bg: "bg-amber-500/10" },
@@ -36,16 +46,16 @@ export default function StudentDashboard() {
         {/* Header */}
         <header className="bg-background border-b border-border px-8 py-6 sticky top-0 z-20 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-black tracking-tight">Welcome back, <span className="text-primary font-bold">Chidi</span></h1>
+            <h1 className="text-2xl font-black tracking-tight">Welcome back, <span className="text-primary font-bold">{user?.firstName}</span></h1>
             <p className="text-muted-foreground font-medium">Continue building your skills and stay on track with your courses.</p>
           </div>
           <div className="flex items-center gap-4">
              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold">Chidi A.</p>
-                <p className="text-xs text-muted-foreground">ID: #AE-2024-001</p>
+                <p className="text-sm font-bold">{user?.firstName} {user?.lastName?.charAt(0)}.</p>
+                <p className="text-xs text-muted-foreground">ID: #{user?.id?.slice(-6) || "000000"}</p>
              </div>
-             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black border border-primary/20">
-                CA
+             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black border border-primary/20 uppercase">
+                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
              </div>
           </div>
         </header>

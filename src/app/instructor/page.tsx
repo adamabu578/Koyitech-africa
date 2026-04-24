@@ -10,11 +10,21 @@ import {
   Upload, Play, FileText, Target, ChevronRight
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export default function InstructorDashboard() {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      setUser(JSON.parse(currentUser));
+    }
+  }, []);
+
+  if (!user) return null;
 
   const stats = [
     { label: "Assigned Courses", value: "3", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
@@ -43,11 +53,11 @@ export default function InstructorDashboard() {
           </div>
           <div className="flex items-center gap-4">
              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold">Sarah O.</p>
+                <p className="text-sm font-bold">{user?.firstName} {user?.lastName?.charAt(0)}.</p>
                 <p className="text-xs text-muted-foreground">Expert Mentor</p>
              </div>
-             <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-primary font-black border border-secondary/20">
-                SO
+             <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-primary font-black border border-secondary/20 uppercase">
+                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
              </div>
           </div>
         </header>
@@ -59,7 +69,7 @@ export default function InstructorDashboard() {
              <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_100%_0%,rgba(99,102,241,0.2),transparent)]" />
              <div className="relative z-10 space-y-6 max-w-2xl">
                 <h2 className="text-4xl md:text-5xl font-black leading-tight">
-                   Welcome, <span className="text-primary italic">Sarah.</span>
+                   Welcome, <span className="text-primary italic">{user?.firstName}.</span>
                 </h2>
                 <p className="text-lg text-white/60 font-medium max-w-lg">
                    Manage your students, classes, and course content from here.

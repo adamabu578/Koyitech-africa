@@ -10,10 +10,20 @@ import {
   PieChart
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      setUser(JSON.parse(currentUser));
+    }
+  }, []);
+
+  if (!user) return null;
 
   const stats = [
     { label: "Total Students", value: "1,248", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10", trend: "+12%" },
@@ -65,7 +75,7 @@ export default function AdminDashboard() {
              <div className="relative z-10 space-y-8">
                 <div className="space-y-2">
                    <h2 className="text-4xl md:text-5xl font-black leading-tight">
-                      Welcome, <span className="text-primary italic">Admin.</span>
+                      Welcome, <span className="text-primary italic">{user?.firstName}.</span>
                    </h2>
                    <p className="text-lg text-white/60 font-medium max-w-lg">
                       Manage the entire Aeroverse Academy platform.
