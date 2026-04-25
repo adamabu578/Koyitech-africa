@@ -21,8 +21,10 @@ export default function StudentDashboard() {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
       setUser(JSON.parse(currentUser));
+    } else {
+      router.push("/login");
     }
-  }, []);
+  }, [router]);
 
   if (!user) return null;
 
