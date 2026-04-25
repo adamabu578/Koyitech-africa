@@ -30,11 +30,12 @@ export default function Assignments() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      <Sidebar userType="student" />
+    <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
+      <div className="flex-1 flex bg-white dark:bg-slate-900 md:rounded-[2.5rem] md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-orange-50/50 dark:border-slate-800">
+        <Sidebar userType="student" />
 
-      <main className="flex-1 overflow-y-auto">
-        <header className="bg-background border-b border-border px-8 py-6 sticky top-0 z-20 flex justify-between items-center text-foreground">
+        <main className="flex-1 overflow-y-auto">
+          <header className="bg-white dark:bg-slate-900 border-b border-border px-8 py-6 sticky top-0 z-20 flex justify-between items-center text-foreground transition-colors">
           <div>
             <h1 className="text-2xl font-black tracking-tight">Assignments</h1>
             <p className="text-muted-foreground font-medium">Practice what you've learned.</p>
@@ -92,6 +93,7 @@ export default function Assignments() {
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 }

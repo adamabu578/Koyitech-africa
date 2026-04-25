@@ -8,9 +8,10 @@ import {
   Upload, MessageSquare, Users, 
   Settings, BarChart3, GraduationCap,
   Calendar, CheckSquare, PencilLine,
-  User, LogOut, Menu, X
+  User, LogOut, Menu, X, Sun, Moon
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useTheme } from "next-themes";
 
 interface SidebarProps {
   userType: "student" | "instructor" | "admin";
@@ -19,6 +20,12 @@ interface SidebarProps {
 export function Sidebar({ userType }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const studentLinks = [
     { path: "/student", label: "Dashboard", icon: LayoutDashboard },
@@ -125,7 +132,16 @@ export function Sidebar({ userType }: SidebarProps) {
           })}
         </nav>
 
-        <div className="px-4 border-t border-border pt-6 mt-6 shrink-0">
+        <div className="px-4 border-t border-border pt-6 mt-6 shrink-0 space-y-2">
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-all font-bold text-sm uppercase tracking-widest"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+            </button>
+          )}
           <button
             onClick={() => router.push("/")}
             className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-bold text-sm uppercase tracking-widest"
