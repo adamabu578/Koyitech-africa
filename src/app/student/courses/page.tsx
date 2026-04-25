@@ -35,7 +35,7 @@ export default function MyCourses() {
         <Sidebar userType="student" />
 
         <main className="flex-1 overflow-y-auto">
-          <header className="bg-white dark:bg-slate-900 border-b border-border px-6 md:px-10 py-6 md:py-8 sticky top-0 z-20 flex justify-between items-center text-foreground transition-colors">
+          <header className="bg-white dark:bg-slate-900 border-b border-border pl-6 pr-20 md:px-10 py-6 md:py-8 sticky top-0 z-20 flex justify-between items-center text-foreground transition-colors">
           <div>
             <h1 className="text-xl md:text-2xl font-black tracking-tight">My Courses</h1>
             <p className="text-muted-foreground font-medium">Continue your learning journey.</p>

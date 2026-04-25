@@ -81,7 +81,7 @@ export default function Profile() {
         <Sidebar userType="student" />
 
         <main className="flex-1 overflow-y-auto">
-          <header className="bg-white dark:bg-slate-900 border-b border-border px-4 md:px-8 py-4 md:py-6 sticky top-0 z-20 flex justify-between items-center text-foreground transition-colors">
+          <header className="bg-white dark:bg-slate-900 border-b border-border pl-4 pr-20 md:px-8 py-4 md:py-6 sticky top-0 z-20 flex justify-between items-center text-foreground transition-colors">
           <div>
             <h1 className="text-xl md:text-2xl font-black tracking-tight">Profile</h1>
             <p className="text-muted-foreground font-medium">Manage your personal information.</p>

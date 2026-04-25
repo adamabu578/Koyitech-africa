@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useRouter, usePathname } from "next/navigation";
 import { 
@@ -67,7 +67,7 @@ export function Sidebar({ userType }: SidebarProps) {
       {/* Mobile Menu Toggle Button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="md:hidden fixed top-6 right-6 z-50 p-3 bg-primary text-white rounded-full shadow-2xl shadow-primary/30 active:scale-95 transition-all"
+        className="md:hidden fixed top-6 right-6 z-50 p-3 bg-primary dark:bg-white text-white dark:text-primary rounded-full shadow-2xl shadow-primary/30 dark:shadow-white/20 active:scale-95 transition-all"
       >
         <Menu className="w-6 h-6" />
       </button>
