@@ -34,15 +34,15 @@ export default function MyCourses() {
       <Sidebar userType="student" />
 
       <main className="flex-1 overflow-y-auto">
-        <header className="bg-background border-b border-border px-8 py-6 sticky top-0 z-20 flex justify-between items-center text-foreground">
+        <header className="bg-background border-b border-border px-4 md:px-8 py-4 md:py-6 sticky top-0 z-20 flex justify-between items-center text-foreground">
           <div>
-            <h1 className="text-2xl font-black tracking-tight">My Courses</h1>
+            <h1 className="text-xl md:text-2xl font-black tracking-tight">My Courses</h1>
             <p className="text-muted-foreground font-medium">Continue your learning journey.</p>
           </div>
         </header>
 
-        <div className="p-8 max-w-7xl mx-auto space-y-10">
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-10">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-8">
             {courses.map((course, index) => (
               <motion.div 
                 key={index}
@@ -50,19 +50,19 @@ export default function MyCourses() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => router.push(`/course/${course.id}`)}
-                className="group cursor-pointer bg-background p-8 rounded-[2.5rem] border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:border-primary transition-all"
+                className="group cursor-pointer bg-background p-5 sm:p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:border-primary transition-all"
               >
-                <div className="flex justify-between items-start mb-8">
-                  <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-primary shadow-sm">
-                    <BookOpen size={30} />
+                <div className="flex justify-between items-start mb-6 md:mb-8">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-secondary/10 flex items-center justify-center text-primary shadow-sm">
+                    <BookOpen className="w-6 h-6 md:w-8 md:h-8" />
                   </div>
                   <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] uppercase font-black tracking-widest">
                     {course.status}
                   </span>
                 </div>
                 
-                <h3 className="text-2xl font-black mb-2 tracking-tight group-hover:text-primary transition-colors">{course.title}</h3>
-                <p className="text-muted-foreground font-medium mb-8">Tutor: {course.tutor}</p>
+                <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight group-hover:text-primary transition-colors">{course.title}</h3>
+                <p className="text-sm md:text-base text-muted-foreground font-medium mb-6 md:mb-8">Tutor: {course.tutor}</p>
                 
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm font-bold">

@@ -41,7 +41,7 @@ export default function Assignments() {
           </div>
         </header>
 
-        <div className="p-8 max-w-7xl mx-auto space-y-10">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-10">
           <div className="space-y-6">
             {assignments.map((assign, index) => (
               <motion.div 
@@ -49,12 +49,12 @@ export default function Assignments() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="p-8 bg-background border border-border rounded-3xl group hover:border-primary transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5"
+                className="p-4 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-3xl group hover:border-primary transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5"
               >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
-                  <div className="flex gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-primary shrink-0">
-                      <CheckSquare size={24} />
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6 mb-6">
+                  <div className="flex gap-4 md:gap-6">
+                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-secondary/10 flex items-center justify-center text-primary shrink-0">
+                      <CheckSquare className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-3 mb-2">
@@ -63,26 +63,26 @@ export default function Assignments() {
                         </span>
                         <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{assign.course}</span>
                       </div>
-                      <h4 className="text-xl font-black text-foreground">{assign.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">{assign.instruction}</p>
+                      <h4 className="text-lg sm:text-xl font-black text-foreground">{assign.title}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">{assign.instruction}</p>
                     </div>
                   </div>
                   <div className="text-left md:text-right shrink-0">
                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mb-1 flex items-center gap-1"><Clock size={12}/> Deadline</p>
-                     <p className="text-sm font-bold text-foreground">{assign.deadline}</p>
+                     <p className="text-xs sm:text-sm font-bold text-foreground">{assign.deadline}</p>
                   </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-4 pt-6 border-t border-border">
-                  <button className="flex-1 md:flex-none px-8 py-4 bg-muted hover:bg-border text-foreground rounded-xl font-black text-xs uppercase tracking-widest transition-all">
+                <div className="flex flex-wrap gap-3 md:gap-4 pt-4 md:pt-6 border-t border-border">
+                  <button className="flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-muted hover:bg-border text-foreground rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all">
                     View Full Instructions
                   </button>
                   {assign.status === 'Pending' ? (
-                     <button className="flex-1 md:flex-none px-8 py-4 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 flex items-center justify-center gap-2 hover:scale-105 transition-all">
+                     <button className="flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-xl shadow-primary/20 flex items-center justify-center gap-2 hover:scale-105 transition-all">
                         <Upload size={16} /> Upload Work
                      </button>
                   ) : (
-                     <button className="flex-1 md:flex-none px-8 py-4 bg-emerald-500/10 text-emerald-600 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                     <button className="flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-emerald-500/10 text-emerald-600 rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center justify-center gap-2">
                         View Submission <ArrowRight size={16} />
                      </button>
                   )}

@@ -78,30 +78,25 @@ export default function Profile() {
       <Sidebar userType="student" />
 
       <main className="flex-1 overflow-y-auto">
-        <header className="bg-background border-b border-border px-8 py-6 sticky top-0 z-20 flex justify-between items-center text-foreground">
+        <header className="bg-background border-b border-border px-4 md:px-8 py-4 md:py-6 sticky top-0 z-20 flex justify-between items-center text-foreground">
           <div>
-            <h1 className="text-2xl font-black tracking-tight">Profile</h1>
+            <h1 className="text-xl md:text-2xl font-black tracking-tight">Profile</h1>
             <p className="text-muted-foreground font-medium">Manage your personal information.</p>
           </div>
         </header>
 
-        <div className="p-8 max-w-5xl mx-auto space-y-8">
+        <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6 md:space-y-8">
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-background border border-border p-8 rounded-[3rem] shadow-sm relative overflow-hidden"
+            className="bg-background border border-border p-5 sm:p-6 md:p-8 rounded-2xl md:rounded-[3rem] shadow-sm relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-32 bg-[linear-gradient(45deg,#181059,#5b4fff)]" />
+            <div className="absolute top-0 left-0 w-full h-24 md:h-32 bg-[linear-gradient(45deg,#181059,#5b4fff)]" />
             
-            <div className="relative pt-16 flex flex-col md:flex-row gap-8 items-start md:items-end mb-8">
-               <div className="w-32 h-32 rounded-[2rem] bg-indigo-50 border-4 border-background flex items-center justify-center text-[#181059] shadow-lg shrink-0">
-                  <span className="text-4xl font-black italic">
-                    {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                  </span>
-               </div>
-               <div className="flex-1">
-                  <h2 className="text-3xl font-black text-foreground mb-1">{user.firstName} {user.lastName}</h2>
-                  <p className="font-bold text-muted-foreground">ID: #{user.id?.slice(-6) || "000000"}</p>
+            <div className="relative pt-12 md:pt-16 flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-end mb-6 md:mb-8">
+               <div className="flex-1 mt-6 md:mt-0">
+                  <h2 className="text-2xl md:text-3xl font-black text-foreground mb-1">{user.firstName} {user.lastName}</h2>
+                  <p className="text-xs md:text-sm font-bold text-muted-foreground">ID: #{user.id?.slice(-6) || "000000"}</p>
                   <div className="mt-4 inline-flex items-center gap-2 bg-secondary/10 px-4 py-2 rounded-full">
                      <Shield size={16} className="text-secondary" />
                      <span className="text-xs font-black uppercase tracking-widest text-secondary">Premium Member</span>
@@ -140,10 +135,10 @@ export default function Profile() {
                )}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 mt-12">
-               <div className="space-y-6">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-[#181059] mb-4 flex items-center gap-2"><User size={16} /> Personal Info</h3>
-                  <div className="p-6 bg-muted/50 rounded-2xl space-y-4">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 mt-8 md:mt-12">
+               <div className="space-y-4 md:space-y-6">
+                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest text-[#181059] mb-2 md:mb-4 flex items-center gap-2"><User size={16} /> Personal Info</h3>
+                  <div className="p-4 md:p-6 bg-muted/50 rounded-xl md:rounded-2xl space-y-4">
                      {isEditing ? (
                        <>
                          <div className="grid grid-cols-2 gap-4">
@@ -212,9 +207,9 @@ export default function Profile() {
                   </div>
                </div>
 
-               <div className="space-y-6">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-[#181059] mb-4 flex items-center gap-2"><Settings size={16} /> Account Security</h3>
-                  <div className="p-6 bg-muted/50 rounded-2xl space-y-4">
+               <div className="space-y-4 md:space-y-6">
+                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest text-[#181059] mb-2 md:mb-4 flex items-center gap-2"><Settings size={16} /> Account Security</h3>
+                  <div className="p-4 md:p-6 bg-muted/50 rounded-xl md:rounded-2xl space-y-4">
                      <div>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Password</p>
                         <p className="text-lg font-medium text-foreground">••••••••</p>

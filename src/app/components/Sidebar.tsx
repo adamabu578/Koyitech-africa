@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
+
 import { useRouter, usePathname } from "next/navigation";
 import { 
   LayoutDashboard, BookOpen, FileText, 
   Upload, MessageSquare, Users, 
   Settings, BarChart3, GraduationCap,
   Calendar, CheckSquare, PencilLine,
-  User, LogOut
+  User, LogOut, Menu, X
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -51,51 +53,88 @@ export function Sidebar({ userType }: SidebarProps) {
 
   const links = userType === "student" ? studentLinks : userType === "instructor" ? instructorLinks : adminLinks;
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   return (
-    <div className="hidden md:flex w-72 bg-card border-r border-border h-screen sticky top-0 flex-col py-8">
-      <div className="px-8 mb-10">
+    <>
+      {/* Mobile Menu Toggle Button */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className="md:hidden fixed top-6 right-6 z-50 p-3 bg-primary text-white rounded-full shadow-2xl shadow-primary/30 active:scale-95 transition-all"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
         <div 
-          className="flex items-center gap-3 text-xl font-black tracking-tighter cursor-pointer"
-          onClick={() => router.push("/")}
+          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`fixed md:sticky top-0 left-0 z-50 h-[100dvh] w-72 bg-card border-r border-border flex flex-col py-8 transition-transform duration-300 ease-in-out ${
+        isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+      }`}>
+        {/* Mobile Close Button */}
+        <button 
+          onClick={() => setIsMobileOpen(false)}
+          className="md:hidden absolute top-8 right-6 p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-all"
         >
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white italic text-xs shadow-lg shadow-primary/20">
-            AA
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="px-8 mb-10">
+          <div 
+            className="flex items-center gap-3 text-xl font-black tracking-tighter cursor-pointer"
+            onClick={() => router.push("/")}
+          >
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white italic text-xs shadow-lg shadow-primary/20">
+              AA
+            </div>
+            <div className="flex flex-col leading-none">
+              <span>AEROVERSE</span>
+              <span className="text-primary italic text-sm">ACADEMY</span>
+            </div>
           </div>
-          AEROVERSE <span className="text-primary italic">ACADEMY</span>
+        </div>
+
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
+          {links.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.path;
+
+            return (
+              <button
+                key={link.path}
+                onClick={() => {
+                  router.push(link.path);
+                  setIsMobileOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${
+                  isActive
+                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground"}`} strokeWidth={isActive ? 2.5 : 2} />
+                <span className="truncate">{link.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="px-4 border-t border-border pt-6 mt-6 shrink-0">
+          <button
+            onClick={() => router.push("/")}
+            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-bold text-sm uppercase tracking-widest"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
-
-      <nav className="flex-1 px-4 space-y-1">
-        {links.map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.path;
-
-          return (
-            <button
-              key={link.path}
-              onClick={() => router.push(link.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${
-                isActive
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-muted-foreground"}`} strokeWidth={isActive ? 2.5 : 2} />
-              <span>{link.label}</span>
-            </button>
-          );
-        })}
-      </nav>
-
-      <div className="px-4 border-t border-border pt-6 mt-6">
-        <button
-          onClick={() => router.push("/")}
-          className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-bold text-sm uppercase tracking-widest"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Logout</span>
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
