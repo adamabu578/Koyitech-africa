@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { FileText, Download, FileArchive } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
 
 export default function Materials() {
   const [materials, setMaterials] = useState<any[]>([]);
@@ -32,13 +33,24 @@ export default function Materials() {
     }
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("materials");
-    if (saved) {
-      setMaterials([...JSON.parse(saved), ...defaultMaterials]);
+  const fetchMaterials = async () => {
+    const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        course: item.course,
+        title: item.title,
+        type: item.file_type,
+        size: item.file_size,
+        dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      }));
+      setMaterials([...mapped, ...defaultMaterials]);
     } else {
       setMaterials(defaultMaterials);
     }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
   }, []);
 
   return (

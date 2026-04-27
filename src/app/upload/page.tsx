@@ -8,6 +8,7 @@ import { Button } from "../components/Button";
 import { Upload, FileText, X, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "../../lib/supabase";
 
 export default function UploadMaterial() {
   const router = useRouter();
@@ -224,37 +225,73 @@ export default function UploadMaterial() {
                 <Button
                   variant="primary"
                   className="flex-1"
-                  onClick={() => {
-                    const existing = JSON.parse(localStorage.getItem("uploadedMaterials") || "[]");
-                    
-                    const newUploads = selectedFiles.map(file => ({
-                      id: Date.now().toString() + Math.random().toString(),
-                      title: title ? `${title} - ${file.name}` : file.name,
-                      type: "PDF",
-                      size: formatFileSize(file.size),
-                      course: course,
-                      description: description,
-                      uploadDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                    }));
-
-                    if (selectedFiles.length === 0 && title !== "") {
-                       newUploads.push({
-                          id: Date.now().toString() + Math.random().toString(),
-                          title: title,
-                          type: "DOC",
-                          size: "1.2 MB",
-                          course: course,
-                          description: description,
-                          uploadDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                       });
+                  onClick={async () => {
+                    if (selectedFiles.length === 0 && !title) {
+                      toast.error("Please provide a title or select files to upload.");
+                      return;
                     }
 
-                    if (newUploads.length > 0) {
-                      localStorage.setItem("uploadedMaterials", JSON.stringify([...newUploads, ...existing]));
-                      toast.success("Materials uploaded successfully!");
-                      router.push("/instructor");
-                    } else {
-                      toast.error("Please provide a title or select files to upload.");
+                    toast.loading("Uploading materials...");
+
+                    let successCount = 0;
+
+                    for (const file of selectedFiles) {
+                      const storageName = `${Date.now()}_${file.name}`;
+                      const { error: uploadError } = await supabase.storage
+                        .from('materials')
+                        .upload(storageName, file);
+
+                      if (uploadError) {
+                        console.error("Upload error:", uploadError);
+                        toast.error(`Failed to upload ${file.name}`);
+                        continue;
+                      }
+
+                      const { data: publicUrlData } = supabase.storage
+                        .from('materials')
+                        .getPublicUrl(storageName);
+
+                      const type = file.name.split('.').pop()?.toUpperCase() || 'FILE';
+
+                      const { error: dbError } = await supabase.from('materials').insert([
+                        {
+                          title: title ? `${title} - ${file.name}` : file.name,
+                          file_name: file.name,
+                          file_url: publicUrlData.publicUrl,
+                          file_size: formatFileSize(file.size),
+                          file_type: type,
+                          course: course,
+                        }
+                      ]);
+
+                      if (dbError) {
+                        console.error("DB error:", dbError);
+                        toast.error(`Failed to save details for ${file.name}`);
+                      } else {
+                        successCount++;
+                      }
+                    }
+
+                    if (selectedFiles.length === 0 && title) {
+                       const { error: dbError } = await supabase.from('materials').insert([
+                        {
+                          title: title,
+                          file_name: title + ".doc",
+                          file_size: "1.2 MB",
+                          file_type: "DOC",
+                          course: course,
+                        }
+                      ]);
+                      if (!dbError) successCount++;
+                    }
+
+                    toast.dismiss();
+
+                    if (successCount > 0) {
+                      toast.success(`Successfully uploaded ${successCount} material(s)!`);
+                      router.push("/instructor/materials");
+                    } else if (selectedFiles.length > 0) {
+                      toast.error("Failed to upload materials.");
                     }
                   }}
                 >

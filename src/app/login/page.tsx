@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { supabase } from "../../lib/supabase";
 
 export default function Login() {
   const router = useRouter();
@@ -13,7 +14,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState("student");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,29 +23,41 @@ export default function Login() {
     }
     
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (data.user) {
+      // Fetch role from profiles table
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, first_name, last_name')
+        .eq('id', data.user.id)
+        .single();
+        
+      const userRole = profile?.role || 'student';
       
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = existingUsers.find((u: any) => u.email === email && u.password === password);
+      // Keep currentUser in localStorage for compatibility during transition
+      const userData = {
+        id: data.user.id,
+        email: data.user.email,
+        firstName: profile?.first_name || '',
+        lastName: profile?.last_name || '',
+        role: userRole
+      };
       
-      if (!user) {
-         // Fallback for mock roles if not registered (to not break dev flow)
-         const mockUser = { id: Date.now().toString(), firstName: "Demo", lastName: "User", email, password, role, phone: "" };
-         localStorage.setItem('currentUser', JSON.stringify(mockUser));
-         toast.success("Welcome back!");
-         router.push(role === "admin" ? "/admin" : role === "instructor" ? "/instructor" : "/student");
-         return;
-      }
-      
-      if (user) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        toast.success("Welcome back!");
-        router.push(user.role === "admin" ? "/admin" : user.role === "instructor" ? "/instructor" : "/student");
-      } else {
-        toast.error("Invalid email or password");
-      }
-    }, 1500);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      toast.success("Welcome back!");
+      router.push(userRole === "admin" ? "/admin" : userRole === "instructor" ? "/instructor" : "/student");
+    }
   };
 
   return (
@@ -122,34 +134,6 @@ export default function Login() {
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                        >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                       </button>
-                     </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                     <label className="text-sm font-medium text-gray-500">I am logging in as a:</label>
-                     <div className="grid grid-cols-2 gap-4">
-                       <button
-                         type="button"
-                         onClick={() => setRole("student")}
-                         className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${
-                           role === "student" 
-                             ? "bg-indigo-50 border-indigo-200 text-indigo-700" 
-                             : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
-                         }`}
-                       >
-                         Student
-                       </button>
-                       <button
-                         type="button"
-                         onClick={() => setRole("instructor")}
-                         className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${
-                           role === "instructor" 
-                             ? "bg-indigo-50 border-indigo-200 text-indigo-700" 
-                             : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
-                         }`}
-                       >
-                         Tutor
                        </button>
                      </div>
                   </div>

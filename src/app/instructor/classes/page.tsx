@@ -6,6 +6,7 @@ import {
   Calendar, Plus, Clock, Video, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "../../../lib/supabase";
 
 export default function InstructorClasses() {
   const [activeTab, setActiveTab] = useState("classes");
@@ -35,13 +36,25 @@ export default function InstructorClasses() {
     }
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("classes");
-    if (saved) {
-      setClasses([...JSON.parse(saved), ...defaultClasses]);
+  const fetchClasses = async () => {
+    const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        course: item.course,
+        topic: item.topic,
+        tutor: item.tutor_name || "Tutor",
+        date: item.date,
+        time: item.time,
+        status: item.status
+      }));
+      setClasses([...mapped, ...defaultClasses]);
     } else {
       setClasses(defaultClasses);
     }
+  };
+
+  useEffect(() => {
+    fetchClasses();
   }, []);
 
   const handleCreateClass = (e: React.FormEvent) => {
@@ -55,19 +68,28 @@ export default function InstructorClasses() {
     const dateObj = new Date(date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
-    const newClass = {
-      course: "General Course",
-      topic,
-      tutor: "Current User",
-      date: formattedDate,
-      time: time + " (WAT)",
-      status: "Upcoming"
-    };
+    const { data, error } = await supabase.from('classes').insert([
+      {
+        course: "General Course",
+        topic,
+        date: formattedDate,
+        time: time + " (WAT)",
+        status: "Upcoming",
+        tutor_name: "Current User"
+      }
+    ]).select();
 
-    const saved = JSON.parse(localStorage.getItem("classes") || "[]");
-    localStorage.setItem("classes", JSON.stringify([newClass, ...saved]));
-
-    setClasses([newClass, ...classes]);
+    if (data && data.length > 0) {
+      const newClass = {
+        course: data[0].course,
+        topic: data[0].topic,
+        tutor: data[0].tutor_name,
+        date: data[0].date,
+        time: data[0].time,
+        status: data[0].status
+      };
+      setClasses([newClass, ...classes]);
+    }
 
     toast.success("Meeting scheduled successfully!");
     setTopic("");

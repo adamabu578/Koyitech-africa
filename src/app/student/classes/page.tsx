@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { Calendar, Clock, Video } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
 
 export default function Classes() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -27,13 +28,25 @@ export default function Classes() {
     }
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("classes");
-    if (saved) {
-      setClasses([...JSON.parse(saved), ...defaultClasses]);
+  const fetchClasses = async () => {
+    const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        course: item.course,
+        topic: item.topic,
+        tutor: item.tutor_name || "Tutor",
+        date: item.date,
+        time: item.time,
+        status: item.status
+      }));
+      setClasses([...mapped, ...defaultClasses]);
     } else {
       setClasses(defaultClasses);
     }
+  };
+
+  useEffect(() => {
+    fetchClasses();
   }, []);
 
   return (

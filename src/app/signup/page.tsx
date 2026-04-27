@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
   const router = useRouter();
@@ -25,23 +26,30 @@ export default function Signup() {
     }
     
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      if (existingUsers.some((u: any) => u.email === email)) {
-        toast.error("Email already in use");
-        return;
+    let finalRole = role;
+    if (email.includes("admin")) finalRole = "admin";
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          firstName,
+          lastName,
+          role: finalRole,
+        }
       }
-      
-      let finalRole = role;
-      if (email.includes("admin")) finalRole = "admin";
-      
-      const newUser = { id: Date.now().toString(), firstName, lastName, email, password, role: finalRole, phone: "" };
-      localStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
-      
-      toast.success("Account created successfully!");
-      router.push("/login");
-    }, 1500);
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success("Account created successfully!");
+    router.push("/login");
   };
 
   return (

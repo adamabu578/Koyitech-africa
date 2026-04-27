@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { 
   CheckSquare, Plus, FileText, ChevronRight, 
-  MessageSquare, Star
+  MessageSquare, Star, Upload
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "../../../lib/supabase";
 
 export default function InstructorAssignments() {
   const [activeTab, setActiveTab] = useState("assignments");
@@ -16,46 +17,109 @@ export default function InstructorAssignments() {
   const [title, setTitle] = useState("");
   const [instructions, setInstructions] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
   const defaultAssignments = [
     { title: "Landing Page Wireframe", course: "UI/UX Design Masterclass", deadline: "Oct 28, 2026", submissions: 32, instruction: "Design a wireframe for a real estate landing page..." },
     { title: "Visual Style Guide", course: "Visual Communication Basics", deadline: "Nov 05, 2026", submissions: 15, instruction: "Create a comprehensive style guide..." },
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("assignments");
-    if (saved) {
-      setAssignments([...JSON.parse(saved), ...defaultAssignments]);
+  const fetchAssignments = async () => {
+    const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        course: item.course,
+        deadline: new Date(item.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        submissions: item.submissions_count,
+        status: item.status,
+        instruction: item.instruction
+      }));
+      setAssignments([...mapped, ...defaultAssignments]);
     } else {
       setAssignments(defaultAssignments);
     }
+  };
+
+  useEffect(() => {
+    fetchAssignments();
   }, []);
 
-  const handleCreateAssignment = (e: React.FormEvent) => {
+  const handleCreateAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !instructions || !deadline) {
       toast.error("Please fill in all fields.");
       return;
     }
     
-    const newAssignment = {
-      title,
-      course: "General Course",
-      deadline,
-      submissions: 0,
-      status: "Pending",
-      instruction: instructions
-    };
+    let fileUrl = null;
+    let fileName = null;
 
-    const saved = JSON.parse(localStorage.getItem("assignments") || "[]");
-    localStorage.setItem("assignments", JSON.stringify([newAssignment, ...saved]));
+    if (file) {
+      toast.loading("Uploading attached file...");
+      const storageName = `${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('assignments')
+        .upload(storageName, file);
 
-    setAssignments([newAssignment, ...assignments]);
+      if (uploadError) {
+        toast.dismiss();
+        toast.error("Failed to upload attached file.");
+        console.error(uploadError);
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('assignments')
+        .getPublicUrl(storageName);
+
+      fileUrl = publicUrlData.publicUrl;
+      fileName = file.name;
+    }
+
+    if (!file) toast.loading("Publishing assignment...");
+
+    const { data, error } = await supabase.from('assignments').insert([
+      {
+        title,
+        course: "General Course",
+        deadline,
+        submissions_count: 0,
+        status: "Pending",
+        instruction: instructions,
+        file_name: fileName,
+        file_url: fileUrl
+      }
+    ]).select();
+
+    toast.dismiss();
+
+    if (error) {
+      toast.error("Failed to publish assignment.");
+      console.error(error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      const newAssignment = {
+        id: data[0].id,
+        title: data[0].title,
+        course: data[0].course,
+        deadline: new Date(data[0].deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        submissions: data[0].submissions_count,
+        status: data[0].status,
+        instruction: data[0].instruction,
+        fileUrl: data[0].file_url
+      };
+      setAssignments([newAssignment, ...assignments]);
+    }
 
     toast.success("Assignment published successfully!");
     setTitle("");
     setInstructions("");
     setDeadline("");
+    setFile(null);
     setActiveTab("assignments");
   };
 
@@ -112,7 +176,14 @@ export default function InstructorAssignments() {
                           <CheckSquare className="w-6 h-6 md:w-8 md:h-8" />
                        </div>
                        <div>
-                          <h4 className="text-lg md:text-xl font-black mb-1">{assignment.title}</h4>
+                          <h4 className="text-lg md:text-xl font-black mb-1">
+                             {assignment.title}
+                             {assignment.fileUrl && (
+                               <a href={assignment.fileUrl} target="_blank" rel="noreferrer" className="inline-block ml-3 p-1 bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">
+                                 <FileText className="w-4 h-4" />
+                               </a>
+                             )}
+                          </h4>
                           <p className="text-xs md:text-sm text-muted-foreground font-medium">{assignment.course} • Deadline: {assignment.deadline}</p>
                        </div>
                     </div>
@@ -166,6 +237,21 @@ export default function InstructorAssignments() {
                       onChange={(e) => setDeadline(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium text-sm md:text-base"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-muted-foreground">Attach File (Optional)</label>
+                    <div className="flex items-center gap-4">
+                      <label className="cursor-pointer flex items-center justify-center gap-2 px-6 py-3 bg-muted/50 text-foreground rounded-xl font-bold hover:bg-muted transition-all text-xs md:text-sm">
+                        <Upload size={18} />
+                        Choose File
+                        <input 
+                          type="file" 
+                          onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+                          className="hidden" 
+                        />
+                      </label>
+                      {file && <span className="text-sm font-medium text-muted-foreground truncate max-w-[200px]">{file.name}</span>}
+                    </div>
                   </div>
                   <div className="pt-2 md:pt-4">
                     <button type="submit" className="w-full md:w-auto px-8 py-4 bg-primary text-white rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">

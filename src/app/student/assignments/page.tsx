@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { CheckSquare, Clock, Upload, ArrowRight } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
 
 export default function Assignments() {
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -32,13 +33,24 @@ export default function Assignments() {
     }
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("assignments");
-    if (saved) {
-      setAssignments([...JSON.parse(saved), ...defaultAssignments]);
+  const fetchAssignments = async () => {
+    const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+    if (data) {
+      const mapped = data.map((item: any) => ({
+        course: item.course,
+        title: item.title,
+        deadline: new Date(item.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: item.status,
+        instruction: item.instruction
+      }));
+      setAssignments([...mapped, ...defaultAssignments]);
     } else {
       setAssignments(defaultAssignments);
     }
+  };
+
+  useEffect(() => {
+    fetchAssignments();
   }, []);
 
   return (

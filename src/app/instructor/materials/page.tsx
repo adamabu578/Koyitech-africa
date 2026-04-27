@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { FileText, Search, Upload, Download, MoreVertical, BookOpen, FileArchive } from "lucide-react";
+import { supabase } from "../../../lib/supabase";
+import { toast } from "sonner";
 
 export default function InstructorMaterials() {
   const [materials, setMaterials] = useState<any[]>([]);
@@ -15,33 +17,87 @@ export default function InstructorMaterials() {
     { id: 4, name: "Design System Starter Kit.zip", size: "24.5 MB", course: "UI/UX Design Masterclass", dateAdded: "Oct 18, 2026", type: "ZIP", title: "Design System Starter Kit" },
   ];
 
-  useEffect(() => {
-    const saved = localStorage.getItem("materials");
-    if (saved) {
-      setMaterials([...JSON.parse(saved), ...defaultMaterials]);
+  const fetchMaterials = async () => {
+    const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
+    if (data) {
+      // Map to frontend expected format
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        name: item.file_name,
+        title: item.title,
+        size: item.file_size,
+        course: item.course,
+        dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        type: item.file_type
+      }));
+      setMaterials([...mapped, ...defaultMaterials]);
     } else {
       setMaterials(defaultMaterials);
     }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
   }, []);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const type = file.name.split('.').pop()?.toUpperCase() || 'FILE';
-      const newMaterial = {
-        id: Date.now(),
-        name: file.name,
-        title: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
-        course: "General Course",
-        dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        type
-      };
-
-      const saved = JSON.parse(localStorage.getItem("materials") || "[]");
-      localStorage.setItem("materials", JSON.stringify([newMaterial, ...saved]));
       
-      setMaterials([newMaterial, ...materials]);
+      toast.loading("Uploading material...");
+      
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('materials')
+        .upload(fileName, file);
+        
+      if (uploadError) {
+        toast.dismiss();
+        toast.error("Failed to upload file to storage.");
+        console.error(uploadError);
+        return;
+      }
+      
+      const { data: publicUrlData } = supabase.storage
+        .from('materials')
+        .getPublicUrl(fileName);
+        
+      const fileUrl = publicUrlData.publicUrl;
+      
+      const { data, error } = await supabase.from('materials').insert([
+        {
+          title: file.name,
+          file_name: file.name,
+          file_url: fileUrl,
+          file_size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
+          file_type: type,
+          course: "General Course",
+        }
+      ]).select();
+      
+      toast.dismiss();
+      
+      if (error) {
+        toast.error("Failed to save material details.");
+        console.error(error);
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        toast.success("Material uploaded successfully!");
+        const newMaterial = {
+          id: data[0].id,
+          name: data[0].file_name,
+          title: data[0].title,
+          size: data[0].file_size,
+          course: data[0].course,
+          dateAdded: new Date(data[0].created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          type: data[0].file_type,
+          fileUrl: data[0].file_url
+        };
+        setMaterials([newMaterial, ...materials]);
+      }
     }
   };
 
@@ -118,7 +174,10 @@ export default function InstructorMaterials() {
                             </div>
                          </div>
                          <div className="flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity w-full sm:w-auto justify-end sm:justify-start border-t sm:border-t-0 border-border pt-2 sm:pt-0 mt-2 sm:mt-0">
-                            <button className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                            <button 
+                              onClick={() => mat.fileUrl ? window.open(mat.fileUrl, '_blank') : null}
+                              className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                            >
                                <Download size={18} />
                             </button>
                             <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
