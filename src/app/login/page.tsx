@@ -13,6 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState("student");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +29,8 @@ export default function Login() {
       const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
       const user = existingUsers.find((u: any) => u.email === email && u.password === password);
       
-      if (!user && (email.includes("admin") || email.includes("tutor") || email.includes("student"))) {
+      if (!user) {
          // Fallback for mock roles if not registered (to not break dev flow)
-         let role = "student";
-         if (email.includes("admin")) role = "admin";
-         else if (email.includes("tutor")) role = "instructor";
          const mockUser = { id: Date.now().toString(), firstName: "Demo", lastName: "User", email, password, role, phone: "" };
          localStorage.setItem('currentUser', JSON.stringify(mockUser));
          toast.success("Welcome back!");
@@ -52,10 +50,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 md:p-8 font-sans">
-      <div className="bg-white rounded-[2rem] shadow-sm w-full max-w-5xl flex overflow-hidden min-h-[700px]">
+      <div className="bg-white rounded-[2rem] shadow-sm w-full max-w-5xl flex flex-col md:flex-row overflow-hidden min-h-0 md:min-h-[700px]">
         
         {/* Left Side - Image */}
-        <div className="hidden md:block w-1/2 p-4">
+        <div className="w-full md:w-1/2 p-4 h-64 md:h-auto min-h-[250px] md:min-h-0 shrink-0">
            <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative">
              <img 
                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" 
@@ -67,7 +65,7 @@ export default function Login() {
         </div>
 
         {/* Right Side - Form */}
-        <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center relative">
+        <div className="w-full md:w-1/2 p-6 md:p-14 flex flex-col justify-center relative flex-1">
            
            <motion.div 
              initial={{ opacity: 0, y: 20 }}
@@ -125,10 +123,38 @@ export default function Login() {
                        >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                        </button>
-                    </div>
-                 </div>
+                     </div>
+                  </div>
 
-                 <button
+                  <div className="space-y-1.5">
+                     <label className="text-sm font-medium text-gray-500">I am logging in as a:</label>
+                     <div className="grid grid-cols-2 gap-4">
+                       <button
+                         type="button"
+                         onClick={() => setRole("student")}
+                         className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${
+                           role === "student" 
+                             ? "bg-indigo-50 border-indigo-200 text-indigo-700" 
+                             : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
+                         }`}
+                       >
+                         Student
+                       </button>
+                       <button
+                         type="button"
+                         onClick={() => setRole("instructor")}
+                         className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${
+                           role === "instructor" 
+                             ? "bg-indigo-50 border-indigo-200 text-indigo-700" 
+                             : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
+                         }`}
+                       >
+                         Tutor
+                       </button>
+                     </div>
+                  </div>
+
+                  <button
                     type="submit"
                     disabled={isLoading}
                     className="w-full bg-[#3b4b96] text-white py-3.5 rounded-lg text-sm font-medium hover:bg-[#2b3a7a] transition-colors disabled:opacity-50 mt-4"

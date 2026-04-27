@@ -42,6 +42,7 @@ export function Sidebar({ userType }: SidebarProps) {
     { path: "/instructor", label: "Dashboard", icon: LayoutDashboard },
     { path: "/instructor/courses", label: "My Courses", icon: BookOpen },
     { path: "/instructor/students", label: "Students", icon: Users },
+    { path: "/instructor/classes", label: "Classes", icon: Calendar },
     { path: "/instructor/assignments", label: "Assignments", icon: CheckSquare },
     { path: "/instructor/quizzes", label: "Quizzes", icon: PencilLine },
     { path: "/instructor/materials", label: "Materials", icon: FileText },

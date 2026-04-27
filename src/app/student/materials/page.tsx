@@ -1,11 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { FileText, Download, FileArchive } from "lucide-react";
 
 export default function Materials() {
-  const materials = [
+  const [materials, setMaterials] = useState<any[]>([]);
+
+  const defaultMaterials = [
     {
       course: "UI/UX Design Masterclass",
       title: "Module 3: Advanced UI Patterns",
@@ -28,6 +31,15 @@ export default function Materials() {
       dateAdded: "April 21, 2026"
     }
   ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("materials");
+    if (saved) {
+      setMaterials([...JSON.parse(saved), ...defaultMaterials]);
+    } else {
+      setMaterials(defaultMaterials);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">

@@ -1,11 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { CheckSquare, Clock, Upload, ArrowRight } from "lucide-react";
 
 export default function Assignments() {
-  const assignments = [
+  const [assignments, setAssignments] = useState<any[]>([]);
+
+  const defaultAssignments = [
     {
       course: "UI/UX Design Masterclass",
       title: "Landing Page Wireframing",
@@ -28,6 +31,15 @@ export default function Assignments() {
       instruction: "Clean the provided raw dataset using Excel formulas and pivot tables."
     }
   ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("assignments");
+    if (saved) {
+      setAssignments([...JSON.parse(saved), ...defaultAssignments]);
+    } else {
+      setAssignments(defaultAssignments);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">

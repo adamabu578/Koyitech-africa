@@ -1,11 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { Calendar, Clock, Video } from "lucide-react";
 
 export default function Classes() {
-  const classes = [
+  const [classes, setClasses] = useState<any[]>([]);
+
+  const defaultClasses = [
     {
       course: "UI/UX Design Masterclass",
       topic: "Prototyping in Figma",
@@ -23,6 +26,15 @@ export default function Classes() {
       status: "Upcoming"
     }
   ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("classes");
+    if (saved) {
+      setClasses([...JSON.parse(saved), ...defaultClasses]);
+    } else {
+      setClasses(defaultClasses);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
