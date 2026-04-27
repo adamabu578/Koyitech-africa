@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function InstructorCourseDetail({ params }: { params: { id: string } }) {
+export default function InstructorCourseDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
 
