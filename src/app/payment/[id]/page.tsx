@@ -55,13 +55,13 @@ export default function Payment() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-card p-12 rounded-[3rem] shadow-2xl max-w-md w-full text-center border border-border"
+          className="bg-card p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl max-w-md w-full text-center border border-border"
         >
-          <div className="w-24 h-24 bg-emerald-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-emerald-500">
+          <div className="w-20 h-20 md:w-24 md:h-24 bg-emerald-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-emerald-500">
             <CheckCircle2 className="w-12 h-12" />
           </div>
           <h2 className="text-3xl font-black mb-4">Payment Successful</h2>
@@ -88,16 +88,16 @@ export default function Payment() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.05),transparent)]">
-      <div className="max-w-5xl w-full grid md:grid-cols-2 bg-background rounded-[3rem] shadow-2xl border border-border overflow-hidden">
+    <div className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-4 md:p-6 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.05),transparent)] py-8 md:py-6">
+      <div className="max-w-5xl w-full grid md:grid-cols-2 bg-background rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-border overflow-hidden">
         
         {/* Course Summary */}
-        <div className="p-10 md:p-14 bg-[#181059] text-white space-y-10 relative overflow-hidden">
+        <div className="p-6 md:p-14 bg-[#181059] text-white space-y-8 md:space-y-10 relative overflow-hidden">
            <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_100%_0%,rgba(99,102,241,0.15),transparent)]" />
            <div className="relative z-10">
               <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-white/60 hover:text-white mb-12 transition-colors text-xs font-black uppercase tracking-widest"
+                className="flex items-center gap-2 text-white/60 hover:text-white mb-8 md:mb-12 transition-colors text-xs font-black uppercase tracking-widest"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Selection
@@ -105,14 +105,14 @@ export default function Payment() {
               
               <div className="space-y-6">
                  <div>
-                    <h2 className="text-sm font-black uppercase tracking-widest text-primary mb-2">Checkout Info</h2>
-                    <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Complete Your <span className="italic text-primary">Enrollment</span></h1>
+                    <h2 className="text-sm font-black uppercase tracking-widest text-emerald-500 mb-2">Checkout Info</h2>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Complete Your <span className="italic text-emerald-500">Enrollment</span></h1>
                     <p className="text-white/60 font-medium text-sm mt-3">Secure your spot and get access to your course and tutor.</p>
                  </div>
                  
-                 <div className="p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6">
-                    <div className="flex gap-4">
-                       <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                 <div className="p-6 md:p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6">
+                    <div className="flex gap-4 items-center">
+                       <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
                           <Zap size={24} className="fill-primary" />
                        </div>
                        <div>
@@ -132,7 +132,7 @@ export default function Payment() {
                        </div>
                        <div className="flex justify-between text-xl pt-4 border-t border-white/10">
                           <span className="font-black">Price</span>
-                          <span className="font-black text-primary italic">₦150,000</span>
+                          <span className="font-black text-white italic">₦150,000</span>
                        </div>
                     </div>
                  </div>
@@ -146,8 +146,8 @@ export default function Payment() {
         </div>
 
         {/* Payment Form */}
-        <div className="p-10 md:p-14 flex flex-col justify-center text-foreground">
-           <div className="space-y-10">
+        <div className="p-6 md:p-14 flex flex-col justify-center text-foreground">
+           <div className="space-y-8 md:space-y-10">
               <div className="space-y-2">
                  <h2 className="text-2xl font-black tracking-tight">Payment Details</h2>
                  <p className="text-muted-foreground font-medium text-sm">Fill in your information to proceed.</p>
