@@ -57,7 +57,7 @@ export default function InstructorClasses() {
     fetchClasses();
   }, []);
 
-  const handleCreateClass = (e: React.FormEvent) => {
+  const handleCreateClass = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic || !date || !time) {
       toast.error("Please fill in all fields.");
