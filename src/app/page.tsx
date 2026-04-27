@@ -54,6 +54,17 @@ export default function Landing() {
            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-[#34d399]/50"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
         </div>
 
+        {/* Mobile Background Image */}
+        <div className="absolute inset-0 z-0 lg:hidden">
+           <img 
+             src="/guy.jpeg" 
+             alt="Student Learning" 
+             className="w-full h-full object-cover object-top opacity-70" 
+           />
+           {/* Overlay to ensure text readability */}
+           <div className="absolute inset-0 bg-gradient-to-b from-[#181059]/10 via-[#181059]/50 to-[#181059]"></div>
+        </div>
+
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
