@@ -23,12 +23,13 @@ export default function InstructorMaterials() {
       // Map to frontend expected format
       const mapped = data.map((item: any) => ({
         id: item.id,
-        name: item.file_name,
+        name: item.title || item.file_name,
         title: item.title,
         size: item.file_size,
         course: item.course,
         dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        type: item.file_type
+        type: item.file_type,
+        fileUrl: supabase.storage.from('materials').getPublicUrl(item.file_name).data.publicUrl
       }));
       setMaterials([...mapped, ...defaultMaterials]);
     } else {
@@ -68,8 +69,7 @@ export default function InstructorMaterials() {
       const { data, error } = await supabase.from('materials').insert([
         {
           title: file.name,
-          file_name: file.name,
-          file_url: fileUrl,
+          file_name: fileName,
           file_size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
           file_type: type,
           course: "General Course",
@@ -79,8 +79,8 @@ export default function InstructorMaterials() {
       toast.dismiss();
       
       if (error) {
-        toast.error("Failed to save material details.");
-        console.error(error);
+        toast.error(`Failed to save material details: ${error.message}`);
+        console.error("Supabase Insert Error:", error);
         return;
       }
       
@@ -94,7 +94,7 @@ export default function InstructorMaterials() {
           course: data[0].course,
           dateAdded: new Date(data[0].created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
           type: data[0].file_type,
-          fileUrl: data[0].file_url
+          fileUrl: fileUrl
         };
         setMaterials([newMaterial, ...materials]);
       }

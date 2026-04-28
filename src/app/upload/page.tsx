@@ -256,8 +256,7 @@ export default function UploadMaterial() {
                       const { error: dbError } = await supabase.from('materials').insert([
                         {
                           title: title ? `${title} - ${file.name}` : file.name,
-                          file_name: file.name,
-                          file_url: publicUrlData.publicUrl,
+                          file_name: storageName,
                           file_size: formatFileSize(file.size),
                           file_type: type,
                           course: course,

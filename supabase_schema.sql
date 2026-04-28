@@ -74,6 +74,39 @@ create policy "Assignments insertable by authenticated users." on public.assignm
 create policy "Classes viewable by everyone." on public.classes for select using (true);
 create policy "Classes insertable by authenticated users." on public.classes for insert with check (auth.role() = 'authenticated');
 
+-- Create courses table
+create table public.courses (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  description text,
+  instructor_id uuid references public.profiles(id) on delete set null,
+  duration text,
+  price text,
+  status text default 'Draft',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create reports table
+create table public.reports (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  type text not null,
+  status text default 'Processing',
+  generated_by uuid references public.profiles(id) on delete set null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS for new tables
+alter table public.courses enable row level security;
+alter table public.reports enable row level security;
+
+-- Setup RLS Policies for courses and reports
+create policy "Courses viewable by everyone." on public.courses for select using (true);
+create policy "Courses insertable by authenticated users." on public.courses for insert with check (auth.role() = 'authenticated');
+
+create policy "Reports viewable by authenticated users." on public.reports for select using (auth.role() = 'authenticated');
+create policy "Reports insertable by authenticated users." on public.reports for insert with check (auth.role() = 'authenticated');
+
 -- Storage bucket for materials and assignments
 insert into storage.buckets (id, name, public) values ('materials', 'materials', true);
 create policy "Public Access Materials" on storage.objects for select using ( bucket_id = 'materials' );

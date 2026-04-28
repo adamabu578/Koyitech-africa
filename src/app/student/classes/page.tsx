@@ -37,7 +37,8 @@ export default function Classes() {
         tutor: item.tutor_name || "Tutor",
         date: item.date,
         time: item.time,
-        status: item.status
+        status: item.status,
+        meeting_link: item.meeting_link
       }));
       setClasses([...mapped, ...defaultClasses]);
     } else {
@@ -97,7 +98,10 @@ export default function Classes() {
                       </div>
                    </div>
 
-                    <button className="w-full py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
+                    <button 
+                      onClick={() => cls.meeting_link ? window.open(cls.meeting_link, '_blank') : alert("No meeting link provided for this class.")}
+                      className="w-full py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-primary/90 transition-all shadow-xl shadow-primary/20"
+                    >
                      Join Class
                    </button>
                 </div>

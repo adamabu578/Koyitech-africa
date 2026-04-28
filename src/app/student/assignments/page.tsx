@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { CheckSquare, Clock, Upload, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "../../../lib/supabase";
 
 export default function Assignments() {
@@ -52,6 +53,15 @@ export default function Assignments() {
   useEffect(() => {
     fetchAssignments();
   }, []);
+
+  const handleUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      toast.success("Assignment uploaded successfully!");
+      const updated = [...assignments];
+      updated[index] = { ...updated[index], status: "Completed" };
+      setAssignments(updated);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
@@ -103,9 +113,10 @@ export default function Assignments() {
                     View Full Instructions
                   </button>
                   {assign.status === 'Pending' ? (
-                     <button className="flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-xl shadow-primary/20 flex items-center justify-center gap-2 hover:scale-105 transition-all">
+                     <label className="cursor-pointer flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-xl shadow-primary/20 flex items-center justify-center gap-2 hover:scale-105 transition-all">
+                        <input type="file" className="hidden" onChange={(e) => handleUpload(index, e)} />
                         <Upload size={16} /> Upload Work
-                     </button>
+                     </label>
                   ) : (
                      <button className="flex-1 md:flex-none px-4 md:px-8 py-3 md:py-4 bg-emerald-500/10 text-emerald-600 rounded-lg md:rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center justify-center gap-2">
                         View Submission <ArrowRight size={16} />

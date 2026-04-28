@@ -16,6 +16,7 @@ export default function InstructorClasses() {
   const [topic, setTopic] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [meetingLink, setMeetingLink] = useState("");
 
   const defaultClasses = [
     {
@@ -45,7 +46,8 @@ export default function InstructorClasses() {
         tutor: item.tutor_name || "Tutor",
         date: item.date,
         time: item.time,
-        status: item.status
+        status: item.status,
+        meeting_link: item.meeting_link
       }));
       setClasses([...mapped, ...defaultClasses]);
     } else {
@@ -59,7 +61,7 @@ export default function InstructorClasses() {
 
   const handleCreateClass = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!topic || !date || !time) {
+    if (!topic || !date || !time || !meetingLink) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -75,7 +77,8 @@ export default function InstructorClasses() {
         date: formattedDate,
         time: time + " (WAT)",
         status: "Upcoming",
-        tutor_name: "Current User"
+        tutor_name: "Current User",
+        meeting_link: meetingLink
       }
     ]).select();
 
@@ -86,7 +89,8 @@ export default function InstructorClasses() {
         tutor: data[0].tutor_name,
         date: data[0].date,
         time: data[0].time,
-        status: data[0].status
+        status: data[0].status,
+        meeting_link: data[0].meeting_link
       };
       setClasses([newClass, ...classes]);
     }
@@ -95,6 +99,7 @@ export default function InstructorClasses() {
     setTopic("");
     setDate("");
     setTime("");
+    setMeetingLink("");
     setActiveTab("classes");
   };
 
@@ -159,6 +164,11 @@ export default function InstructorClasses() {
                       </div>
                       <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 text-foreground">{cls.topic}</h3>
                       <p className="text-sm md:text-base font-bold text-muted-foreground mb-1">{cls.course}</p>
+                      {cls.meeting_link && (
+                        <a href={cls.meeting_link} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-xs font-bold text-primary hover:underline">
+                          Join Meeting
+                        </a>
+                      )}
                     </div>
                     
                     <div className="space-y-6 mt-6">
@@ -207,6 +217,16 @@ export default function InstructorClasses() {
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
                       placeholder="e.g. 10:00 AM - 12:00 PM"
+                      className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium text-sm md:text-base"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-muted-foreground">Meeting Link</label>
+                    <input 
+                      type="url" 
+                      value={meetingLink}
+                      onChange={(e) => setMeetingLink(e.target.value)}
+                      placeholder="e.g. https://meet.google.com/xyz"
                       className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium text-sm md:text-base"
                     />
                   </div>

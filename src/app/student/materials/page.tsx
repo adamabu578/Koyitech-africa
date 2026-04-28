@@ -41,7 +41,8 @@ export default function Materials() {
         title: item.title,
         type: item.file_type,
         size: item.file_size,
-        dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        fileUrl: supabase.storage.from('materials').getPublicUrl(item.file_name).data.publicUrl
       }));
       setMaterials([...mapped, ...defaultMaterials]);
     } else {
@@ -93,7 +94,10 @@ export default function Materials() {
                   </div>
                 </div>
                 
-                <button className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 bg-muted hover:bg-primary hover:text-white text-foreground rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors mt-2 md:mt-0">
+                <button 
+                  onClick={() => mat.fileUrl ? window.open(mat.fileUrl, '_blank') : null}
+                  className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 bg-muted hover:bg-primary hover:text-white text-foreground rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors mt-2 md:mt-0"
+                >
                   <Download size={16} /> Download
                 </button>
               </motion.div>
