@@ -345,7 +345,7 @@ export default function Landing() {
       </section>
 
       {/* 7. About Us */}
-      <section className="py-24 bg-background border-t border-border/50">
+      <section id="about" className="py-24 bg-background border-t border-border/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">

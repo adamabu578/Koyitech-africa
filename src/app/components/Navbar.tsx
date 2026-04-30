@@ -2,13 +2,20 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
-import { Menu, X, Search, ShoppingBag, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 
 export function Navbar() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,55 +30,50 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className={`fixed top-0 w-full z-[100] transition-colors duration-300 ${scrolled ? 'bg-[#181059] shadow-lg' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 w-full z-[100] transition-colors duration-300 ${scrolled ? 'bg-[#181059] dark:bg-slate-950 shadow-lg' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         
-        {/* Left Section: Logo & Explore */}
-        <div className="flex items-center gap-8">
+        {/* Left Section: Logo */}
+        <div className="flex flex-1 items-center justify-start">
           <motion.div
-            className="text-2xl font-black cursor-pointer flex items-center gap-3 tracking-tighter text-white"
+            className="text-2xl font-black cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
             onClick={() => router.push("/")}
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white italic">
               AA
             </div>
-            <span className="hidden sm:block uppercase">Aeroverse Academy</span>
+            <span className="hidden sm:block uppercase tracking-tight">Aeroverse Academy</span>
           </motion.div>
-
-          <div className="hidden md:flex items-center text-white/90 gap-2 cursor-pointer hover:text-white">
-             <Menu className="w-5 h-5 text-emerald-400" />
-             <span className="text-sm font-semibold">Explore</span>
-          </div>
         </div>
 
         {/* Middle Section: Links */}
-        <div className="hidden lg:flex items-center gap-6">
-           {["Courses", "Mentorship", "About", "FAQ", "Contact"].map((item) => (
-             <div key={item} className="flex items-center gap-1 text-white/80 hover:text-white cursor-pointer text-sm font-medium transition-colors">
+        <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
+           {["Courses", "About", "FAQ", "Contact"].map((item) => (
+             <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold transition-colors">
                {item}
-               {["Courses"].includes(item) && <ChevronDown className="w-4 h-4" />}
-             </div>
+             </a>
            ))}
         </div>
 
         {/* Right Section: Actions */}
-        <div className="flex items-center gap-6">
+        <div className="flex flex-1 items-center justify-end gap-6">
           <div className="hidden sm:flex items-center gap-5 text-white/90">
-             <Search className="w-5 h-5 cursor-pointer hover:text-white" />
-             <div className="relative cursor-pointer hover:text-white">
-                <ShoppingBag className="w-5 h-5" />
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white text-[#181059] rounded-full flex items-center justify-center text-[10px] font-bold">
-                   0
-                </span>
-             </div>
+             {mounted && (
+               <button
+                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                 className="p-2 rounded-full hover:bg-white/10 transition-colors"
+               >
+                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+               </button>
+             )}
           </div>
           
           <button
             className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold hover:bg-white/90 transition-all text-sm"
             onClick={() => router.push("/login")}
           >
-            Log In
+            Enrol Now/Register
           </button>
 
           <button
@@ -89,17 +91,26 @@ export function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden w-full bg-[#181059] border-t border-white/10 shadow-2xl p-6 absolute top-20 left-0 flex flex-col gap-4"
+            className="lg:hidden w-full bg-[#181059] dark:bg-slate-950 border-t border-white/10 shadow-2xl p-6 absolute top-20 left-0 flex flex-col gap-4"
           >
-            {["Courses", "Mentorship", "About", "FAQ", "Contact"].map((item) => (
+            <div className="flex justify-end pb-2 border-b border-white/10 mb-2">
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="p-2 rounded-full hover:bg-white/10 transition-colors text-white"
+                >
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+              )}
+            </div>
+            {["Courses", "About", "FAQ", "Contact"].map((item) => (
               <a 
                 key={item}
                 href={`#${item.toLowerCase()}`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-lg font-bold p-4 hover:bg-white/10 text-white rounded-xl transition-colors flex justify-between items-center"
+                className="text-lg font-bold p-4 hover:bg-white/10 dark:hover:bg-slate-800 text-white dark:text-slate-200 rounded-xl transition-colors flex justify-between items-center"
               >
                 {item}
-                {["Courses", "Mentorship", "About"].includes(item) && <ChevronDown className="w-5 h-5" />}
               </a>
             ))}
             <hr className="border-white/10 my-2" />
@@ -110,7 +121,7 @@ export function Navbar() {
                  router.push("/login");
               }}
             >
-              Log In
+              Enrol Now/Register
             </button>
           </motion.div>
         )}
