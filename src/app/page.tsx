@@ -50,9 +50,7 @@ export default function Landing() {
         <div className="absolute top-1/2 left-1/3">
            <div className="w-2 h-2 bg-white/20 rounded-full"></div>
         </div>
-        <div className="absolute bottom-40 right-1/4">
-           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-[#34d399]/50"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        </div>
+
 
         {/* Mobile Background Image */}
         <div className="absolute inset-0 z-0 lg:hidden">
