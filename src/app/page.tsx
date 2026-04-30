@@ -42,7 +42,7 @@ export default function Landing() {
       <Navbar />
 
       {/* 1. Hero Section */}
-      <section className="relative pt-32 pb-40 lg:pb-56 overflow-hidden bg-[#181059] text-white">
+      <section className="relative pt-32 pb-40 lg:pb-56 overflow-hidden bg-[#181059] dark:bg-slate-950 text-white">
         {/* Background Decorative Stars and Elements */}
         <div className="absolute top-20 left-20">
            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-white/20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
@@ -214,7 +214,7 @@ export default function Landing() {
       </section>
 
       {/* 3. The Power of Tutor-Based Learning */}
-      <section className="py-24 bg-[#181059] text-white overflow-hidden relative">
+      <section className="py-24 bg-[#181059] dark:bg-slate-950 text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid md:grid-cols-2 gap-20 items-center">
             <div className="space-y-8">
@@ -324,7 +324,7 @@ export default function Landing() {
 
       {/* 6. Ready to Rewrite Your Career Story? */}
       <section className="py-24 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[#181059]"></div>
+        <div className="absolute inset-0 bg-[#181059] dark:bg-slate-950"></div>
         <div className="max-w-5xl mx-auto rounded-[3rem] p-12 md:p-24 text-center text-white relative z-10">
           <h2 className="text-4xl md:text-6xl font-black leading-tight mb-6">Ready to Rewrite Your Career Story?</h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto mb-10">
