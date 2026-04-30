@@ -36,7 +36,7 @@ export function Navbar() {
         {/* Left Section: Logo */}
         <div className="flex flex-1 items-center justify-start">
           <motion.div
-            className="text-2xl font-black cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
+            className="text-2xl font-black font-outfit cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
             onClick={() => router.push("/")}
             whileHover={{ scale: 1.02 }}
           >
@@ -50,7 +50,7 @@ export function Navbar() {
         {/* Middle Section: Links */}
         <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
            {["Courses", "About", "FAQ", "Contact"].map((item) => (
-             <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold transition-colors">
+             <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold font-outfit tracking-tight transition-colors">
                {item}
              </a>
            ))}
@@ -70,7 +70,7 @@ export function Navbar() {
           </div>
           
           <button
-            className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold hover:bg-white/90 transition-all text-sm"
+            className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
             onClick={() => router.push("/login")}
           >
             Enrol Now/Register
@@ -108,14 +108,14 @@ export function Navbar() {
                 key={item}
                 href={`#${item.toLowerCase()}`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-lg font-bold p-4 hover:bg-white/10 dark:hover:bg-slate-800 text-white dark:text-slate-200 rounded-xl transition-colors flex justify-between items-center"
+                className="text-lg font-bold font-outfit tracking-tight p-4 hover:bg-white/10 dark:hover:bg-slate-800 text-white dark:text-slate-200 rounded-xl transition-colors flex justify-between items-center"
               >
                 {item}
               </a>
             ))}
             <hr className="border-white/10 my-2" />
             <button
-              className="p-4 bg-white text-[#181059] font-bold rounded-xl"
+              className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl"
               onClick={() => {
                  setIsMobileMenuOpen(false);
                  router.push("/login");
