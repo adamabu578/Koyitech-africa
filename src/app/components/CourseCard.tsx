@@ -134,7 +134,7 @@ export function CourseCard({
                    else router.push(`/course/${id}`);
                  }}
               >
-                 Enroll Now <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                 Register <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
               </button>
             )}
           </div>

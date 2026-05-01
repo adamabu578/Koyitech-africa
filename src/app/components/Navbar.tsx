@@ -32,7 +32,7 @@ export function Navbar() {
   return (
     <nav className={`fixed top-0 w-full z-[100] transition-colors duration-300 ${scrolled ? 'bg-[#181059] dark:bg-slate-950 shadow-lg' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        
+
         {/* Left Section: Logo */}
         <div className="flex flex-1 items-center justify-start">
           <motion.div
@@ -40,47 +40,47 @@ export function Navbar() {
             onClick={() => router.push("/")}
             whileHover={{ scale: 1.02 }}
           >
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white italic">
-              AA
-            </div>
+            {/* <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white italic">
+              
+            </div> */}
             <span className="hidden sm:block uppercase tracking-tight">Aeroverse Academy</span>
           </motion.div>
         </div>
 
         {/* Middle Section: Links */}
         <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
-           {["Courses", "About", "FAQ", "Contact"].map((item) => (
-             <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold font-outfit tracking-tight transition-colors">
-               {item}
-             </a>
-           ))}
+          {["Courses", "About", "FAQ", "Contact"].map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold font-outfit tracking-tight transition-colors">
+              {item}
+            </a>
+          ))}
         </div>
 
         {/* Right Section: Actions */}
         <div className="flex flex-1 items-center justify-end gap-6">
           <div className="hidden sm:flex items-center gap-5 text-white/90">
-             {mounted && (
-               <button
-                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                 className="p-2 rounded-full hover:bg-white/10 transition-colors"
-               >
-                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-               </button>
-             )}
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            )}
           </div>
-          
+
           <button
             className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
             onClick={() => router.push("/login")}
           >
-            Enrol Now/Register
+            Register
           </button>
 
           <button
             className="lg:hidden p-2 text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
@@ -104,7 +104,7 @@ export function Navbar() {
               )}
             </div>
             {["Courses", "About", "FAQ", "Contact"].map((item) => (
-              <a 
+              <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -117,8 +117,8 @@ export function Navbar() {
             <button
               className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl"
               onClick={() => {
-                 setIsMobileMenuOpen(false);
-                 router.push("/login");
+                setIsMobileMenuOpen(false);
+                router.push("/login");
               }}
             >
               Enrol Now/Register
