@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { 
   LayoutDashboard, BookOpen, FileText, 
   Upload, MessageSquare, Users, 
@@ -94,9 +95,9 @@ export function Sidebar({ userType }: SidebarProps) {
         </button>
 
         <div className="px-8 mb-10">
-          <div 
+          <Link 
+            href="/"
             className="flex items-center gap-3 text-xl font-black tracking-tighter cursor-pointer"
-            onClick={() => router.push("/")}
           >
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white italic text-xs shadow-lg shadow-primary/20">
               AA
@@ -105,7 +106,7 @@ export function Sidebar({ userType }: SidebarProps) {
               <span>AEROVERSE</span>
               <span className="text-primary italic text-sm">ACADEMY</span>
             </div>
-          </div>
+          </Link>
         </div>
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
@@ -114,12 +115,10 @@ export function Sidebar({ userType }: SidebarProps) {
             const isActive = pathname === link.path;
 
             return (
-              <button
+              <Link
                 key={link.path}
-                onClick={() => {
-                  router.push(link.path);
-                  setIsMobileOpen(false);
-                }}
+                href={link.path}
+                onClick={() => setIsMobileOpen(false)}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${
                   isActive
                     ? "bg-primary text-white shadow-lg shadow-primary/20"
@@ -128,7 +127,7 @@ export function Sidebar({ userType }: SidebarProps) {
               >
                 <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground"}`} strokeWidth={isActive ? 2.5 : 2} />
                 <span className="truncate">{link.label}</span>
-              </button>
+              </Link>
             );
           })}
         </nav>

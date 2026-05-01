@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { LayoutDashboard, BookOpen, FileText, Upload } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -34,19 +35,19 @@ export function MobileNav({ userType }: MobileNavProps) {
           const isActive = pathname === link.path;
 
           return (
-            <motion.button
-              key={link.path}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => router.push(link.path)}
-              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-colors ${
-                isActive
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              }`}
-            >
-              <Icon className="w-6 h-6" />
-              <span className="text-xs">{link.label}</span>
-            </motion.button>
+            <Link key={link.path} href={link.path} passHref>
+              <motion.div
+                whileTap={{ scale: 0.95 }}
+                className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-colors cursor-pointer ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <Icon className="w-6 h-6" />
+                <span className="text-xs">{link.label}</span>
+              </motion.div>
+            </Link>
           );
         })}
       </div>

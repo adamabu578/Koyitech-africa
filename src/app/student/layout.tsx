@@ -24,12 +24,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           const enrolledCourses = localStorage.getItem("enrolledCourses");
           const parsed = enrolledCourses ? JSON.parse(enrolledCourses) : [];
           if (!parsed || parsed.length === 0) {
-            toast.info("Please enroll in a course to access this page.");
+            toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
             router.push("/courses");
             return;
           }
         } catch (err) {
-          toast.info("Please enroll in a course to access this page.");
+          toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
           router.push("/courses");
           return;
         }

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
@@ -35,22 +36,20 @@ export function Navbar() {
 
         {/* Left Section: Logo */}
         <div className="flex flex-1 items-center justify-start">
-          <motion.div
-            className="text-2xl font-black font-outfit cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
-            onClick={() => router.push("/")}
-            whileHover={{ scale: 1.02 }}
-          >
-            {/* <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white italic">
-              
-            </div> */}
-            <span className="hidden sm:block uppercase tracking-tight">Aeroverse Academy</span>
-          </motion.div>
+          <Link href="/" passHref>
+            <motion.div
+              className="text-2xl font-black font-outfit cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
+              whileHover={{ scale: 1.02 }}
+            >
+              <span className="hidden sm:block uppercase tracking-tight">Aeroverse Academy</span>
+            </motion.div>
+          </Link>
         </div>
 
         {/* Middle Section: Links */}
         <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
           {["Courses", "About", "FAQ", "Contact"].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold font-outfit tracking-tight transition-colors">
+            <a key={item} href={`/#${item.toLowerCase()}`} className="flex items-center gap-1 text-white/80 dark:text-slate-300 hover:text-white dark:hover:text-[#34d399] cursor-pointer text-lg font-bold font-outfit tracking-tight transition-colors">
               {item}
             </a>
           ))}
@@ -69,12 +68,12 @@ export function Navbar() {
             )}
           </div>
 
-          <button
+          <Link
+            href="/login"
             className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
-            onClick={() => router.push("/login")}
           >
             Register
-          </button>
+          </Link>
 
           <button
             className="lg:hidden p-2 text-white"
@@ -106,7 +105,7 @@ export function Navbar() {
             {["Courses", "About", "FAQ", "Contact"].map((item) => (
               <a
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                href={`/#${item.toLowerCase()}`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-lg font-bold font-outfit tracking-tight p-4 hover:bg-white/10 dark:hover:bg-slate-800 text-white dark:text-slate-200 rounded-xl transition-colors flex justify-between items-center"
               >
@@ -114,15 +113,13 @@ export function Navbar() {
               </a>
             ))}
             <hr className="border-white/10 my-2" />
-            <button
-              className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                router.push("/login");
-              }}
+            <Link
+              href="/login"
+              className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Enrol Now/Register
-            </button>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
