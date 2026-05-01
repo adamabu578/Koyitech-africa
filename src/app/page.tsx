@@ -202,7 +202,7 @@ export default function Landing() {
                           {course.desc}
                        </p>
                        <button onClick={() => router.push("/payment/1")} className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-[#5b4fff] font-bold rounded-xl group-hover:bg-[#5b4fff] group-hover:text-white transition-colors flex justify-center items-center gap-2">
-                          Register <ArrowRight className="w-4 h-4" />
+                          Enroll Course <ArrowRight className="w-4 h-4" />
                        </button>
                     </div>
                  </div>
