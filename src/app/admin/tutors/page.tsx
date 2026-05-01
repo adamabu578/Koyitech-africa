@@ -143,14 +143,41 @@ export default function AdminTutors() {
                           {new Date(tutor.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                            Verified
-                          </span>
+                          {tutor.status === 'pending' ? (
+                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                              Pending Approval
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                              Verified
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-md hover:bg-indigo-50 transition-colors">
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            {tutor.status === 'pending' && (
+                              <button 
+                                onClick={async () => {
+                                  try {
+                                    const { error } = await supabase
+                                      .from('profiles')
+                                      .update({ status: 'active' })
+                                      .eq('id', tutor.id);
+                                    if (error) throw error;
+                                    setTutors(tutors.map(t => t.id === tutor.id ? { ...t, status: 'active' } : t));
+                                  } catch (err) {
+                                    console.error(err);
+                                  }
+                                }}
+                                className="px-3 py-1 bg-green-500 text-white rounded text-xs font-bold hover:bg-green-600 transition-colors"
+                              >
+                                Approve
+                              </button>
+                            )}
+                            <button className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-md hover:bg-indigo-50 transition-colors">
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

@@ -36,22 +36,22 @@ export default function Login() {
     }
 
     if (data.user) {
-      // Fetch role from profiles table
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, first_name, last_name')
-        .eq('id', data.user.id)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, first_name, last_name, status')
+          .eq('id', data.user.id)
         .single();
         
-      const userRole = profile?.role || 'student';
+      const userRole = profile?.role || data.user.user_metadata?.role || 'student';
       
       // Keep currentUser in localStorage for compatibility during transition
       const userData = {
         id: data.user.id,
         email: data.user.email,
-        firstName: profile?.first_name || '',
-        lastName: profile?.last_name || '',
-        role: userRole
+        firstName: profile?.first_name || data.user.user_metadata?.firstName || '',
+        lastName: profile?.last_name || data.user.user_metadata?.lastName || '',
+        role: userRole,
+        status: profile?.status || 'active'
       };
       
       localStorage.setItem('currentUser', JSON.stringify(userData));
