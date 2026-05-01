@@ -2,9 +2,9 @@
 
 import { motion } from "motion/react";
 import { Sidebar } from "../components/Sidebar";
-import { 
-  BookOpen, Clock, Target, 
-  Play, FileText, MessageSquare, 
+import {
+  BookOpen, Clock, Target,
+  Play, FileText, MessageSquare,
   Calendar, CheckCircle2, ChevronRight,
   MoreHorizontal, Bell,
   Award, Rocket, BarChart2
@@ -12,6 +12,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+
+import { toast } from "sonner";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -76,10 +78,10 @@ export default function StudentDashboard() {
           {/* Content */}
           <div className="p-6 md:p-10 pt-0 max-w-[1600px] mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
+
               {/* Left Column (Main Content) - 2/3 width */}
               <div className="lg:col-span-2 space-y-8">
-                
+
                 {/* Overview Cards */}
                 <section>
                   <div className="flex justify-between items-center mb-5">
@@ -89,7 +91,7 @@ export default function StudentDashboard() {
                       All Courses <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                     {stats.map((stat, i) => (
                       <motion.div
@@ -102,7 +104,7 @@ export default function StudentDashboard() {
                         {/* Wavy background decoration */}
                         <div className="absolute -right-4 -bottom-4 w-32 h-32 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500" />
                         <div className="absolute -right-8 -bottom-8 w-48 h-48 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500 delay-75" />
-                        
+
                         <div className="relative z-10 flex items-start gap-3 mb-6">
                           <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                             <stat.icon className="w-5 h-5 text-white" />
@@ -118,7 +120,7 @@ export default function StudentDashboard() {
 
                 {/* Middle Row: Active Courses & Quick Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  
+
                   {/* Active Courses Progress */}
                   <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)] p-6 transition-colors">
                     <div className="flex justify-between items-center mb-6">
@@ -135,11 +137,11 @@ export default function StudentDashboard() {
                             <span className="font-bold text-slate-800 dark:text-slate-100">{course.progress}%</span>
                           </div>
                           <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <motion.div 
+                            <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${course.progress}%` }}
                               transition={{ duration: 1, delay: 0.2 }}
-                              className={`h-full ${course.color} rounded-full`} 
+                              className={`h-full ${course.color} rounded-full`}
                             />
                           </div>
                         </div>
@@ -159,7 +161,7 @@ export default function StudentDashboard() {
                         <option>Weekly</option>
                       </select>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       {quickActions.map((action, i) => (
                         <button
@@ -185,7 +187,7 @@ export default function StudentDashboard() {
                       <Award className="w-3 h-3" /> Current <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
-                  
+
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden transition-colors">
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-sm">
@@ -237,7 +239,7 @@ export default function StudentDashboard() {
 
               {/* Right Column - 1/3 width */}
               <div className="space-y-8">
-                
+
                 {/* My Schedule */}
                 <section>
                   <div className="flex justify-between items-center mb-5">
@@ -246,7 +248,7 @@ export default function StudentDashboard() {
                       <MoreHorizontal className="w-5 h-5" />
                     </button>
                   </div>
-                  
+
                   <div className="space-y-4">
                     {[
                       { title: "UI Design Principles", date: "August 9, 2024", time: "10:00 AM", icon: Play, color: "text-orange-500" },
@@ -276,7 +278,7 @@ export default function StudentDashboard() {
                       <MoreHorizontal className="w-5 h-5" />
                     </button>
                   </div>
-                  
+
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)] p-6 transition-colors">
                     <div className="space-y-6">
                       {[
