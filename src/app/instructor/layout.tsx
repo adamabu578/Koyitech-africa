@@ -24,10 +24,10 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
       const currentUser = JSON.parse(currentUserStr);
 
       try {
-        // Fetch the fresh status from the database to prevent localStorage tampering
+        // Fetch the fresh role from the database to prevent localStorage tampering
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("status")
+          .select("role")
           .eq("id", currentUser.id)
           .single();
 
@@ -35,7 +35,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
           throw error;
         }
 
-        const userStatus = profile?.status || "active";
+        const userStatus = profile?.role === "pending_instructor" ? "pending" : "active";
         setStatus(userStatus);
         
         // Update local storage to keep it in sync

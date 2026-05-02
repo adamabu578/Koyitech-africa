@@ -29,7 +29,7 @@ export default function AdminTutors() {
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
-          .eq("role", "instructor")
+          .in("role", ["instructor", "pending_instructor"])
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -143,7 +143,7 @@ export default function AdminTutors() {
                           {new Date(tutor.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
-                          {tutor.status === 'pending' ? (
+                          {tutor.role === 'pending_instructor' ? (
                             <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
                               Pending Approval
                             </span>
@@ -155,16 +155,16 @@ export default function AdminTutors() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {tutor.status === 'pending' && (
+                            {tutor.role === 'pending_instructor' && (
                               <button 
                                 onClick={async () => {
                                   try {
                                     const { error } = await supabase
                                       .from('profiles')
-                                      .update({ status: 'active' })
+                                      .update({ role: 'instructor' })
                                       .eq('id', tutor.id);
                                     if (error) throw error;
-                                    setTutors(tutors.map(t => t.id === tutor.id ? { ...t, status: 'active' } : t));
+                                    setTutors(tutors.map(t => t.id === tutor.id ? { ...t, role: 'instructor' } : t));
                                   } catch (err) {
                                     console.error(err);
                                   }

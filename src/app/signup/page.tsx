@@ -27,6 +27,7 @@ export default function Signup() {
 
     setIsLoading(true);
     let finalRole = role;
+    if (role === "instructor") finalRole = "pending_instructor";
     if (email.includes("admin")) finalRole = "admin";
 
     const { data, error } = await supabase.auth.signUp({

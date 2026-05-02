@@ -42,7 +42,9 @@ export default function Login() {
           .eq('id', data.user.id)
         .single();
         
-      const userRole = profile?.role || data.user.user_metadata?.role || 'student';
+      const rawRole = profile?.role || data.user.user_metadata?.role || 'student';
+      const isPendingInstructor = rawRole === 'pending_instructor';
+      const userRole = isPendingInstructor ? 'instructor' : rawRole;
       
       // Keep currentUser in localStorage for compatibility during transition
       const userData = {
@@ -51,7 +53,7 @@ export default function Login() {
         firstName: profile?.first_name || data.user.user_metadata?.firstName || '',
         lastName: profile?.last_name || data.user.user_metadata?.lastName || '',
         role: userRole,
-        status: profile?.status || 'active'
+        status: isPendingInstructor ? 'pending' : 'active'
       };
       
       localStorage.setItem('currentUser', JSON.stringify(userData));
