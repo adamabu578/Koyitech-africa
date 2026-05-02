@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { 
-  LayoutDashboard, BookOpen, FileText, 
-  Upload, MessageSquare, Users, 
+import {
+  LayoutDashboard, BookOpen, FileText,
+  Upload, MessageSquare, Users,
   Settings, BarChart3, GraduationCap,
   Calendar, CheckSquare, PencilLine,
   User, LogOut, Menu, X, Sun, Moon
@@ -76,18 +76,17 @@ export function Sidebar({ userType }: SidebarProps) {
 
       {/* Mobile Overlay */}
       {isMobileOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`fixed md:sticky top-0 left-0 z-50 h-[100dvh] w-72 bg-card border-r border-border flex flex-col py-8 transition-transform duration-300 ease-in-out ${
-        isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
-      }`}>
+      <div className={`fixed md:sticky top-0 left-0 z-50 h-[100dvh] w-72 bg-card border-r border-border flex flex-col py-8 transition-transform duration-300 ease-in-out ${isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+        }`}>
         {/* Mobile Close Button */}
-        <button 
+        <button
           onClick={() => setIsMobileOpen(false)}
           className="md:hidden absolute top-8 right-6 p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-all"
         >
@@ -95,7 +94,7 @@ export function Sidebar({ userType }: SidebarProps) {
         </button>
 
         <div className="px-8 mb-10">
-          <Link 
+          <Link
             href="/"
             className="flex items-center gap-3 text-xl font-black tracking-tighter cursor-pointer"
           >
@@ -119,11 +118,10 @@ export function Sidebar({ userType }: SidebarProps) {
                 key={link.path}
                 href={link.path}
                 onClick={() => setIsMobileOpen(false)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${
-                  isActive
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${isActive
                     ? "bg-primary text-white shadow-lg shadow-primary/20"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
+                  }`}
               >
                 <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground"}`} strokeWidth={isActive ? 2.5 : 2} />
                 <span className="truncate">{link.label}</span>
