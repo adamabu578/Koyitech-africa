@@ -314,7 +314,7 @@ export default function CourseDetails() {
          <div className="px-8 mb-10">
             <div className="text-xl font-black tracking-tighter flex items-center gap-2 cursor-pointer" onClick={() => router.push("/student")}>
                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white italic text-xs">AA</div>
-               AEROVERSE
+               KOYITECH
             </div>
          </div>
          <div className="px-4 space-y-1">

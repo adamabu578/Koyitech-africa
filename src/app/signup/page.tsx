@@ -262,7 +262,7 @@ export default function Signup() {
               </p>
 
               <p className="text-xs text-gray-500 pt-2 text-center">
-                By clicking the above, I agree to Aeroverse Academy's <a href="#" className="text-[#3b4b96]">Terms</a> and <a href="#" className="text-[#3b4b96]">Privacy policy</a>.
+                By clicking the above, I agree to Koyitech Africa's <a href="#" className="text-[#3b4b96]">Terms</a> and <a href="#" className="text-[#3b4b96]">Privacy policy</a>.
               </p>
             </form>
           </motion.div>

@@ -102,8 +102,8 @@ export function Sidebar({ userType }: SidebarProps) {
               AA
             </div>
             <div className="flex flex-col leading-none">
-              <span>AEROVERSE</span>
-              <span className="text-primary italic text-sm">ACADEMY</span>
+              <span>KOYITECH</span>
+              <span className="text-primary italic text-sm">AFRICA</span>
             </div>
           </Link>
         </div>

@@ -33,7 +33,7 @@ export default function Landing() {
     { q: "Do I need experience?", a: "Most of our courses are beginner-friendly. We start from the basics and build up to advanced concepts." },
     { q: "Are classes live?", a: "Yes! We prioritize live, tutor-led sessions to ensure you can interact, ask questions, and get real-time feedback." },
     { q: "How do I enroll?", a: "Simply click the 'Register Interest' button. Our team will contact you with the next steps regarding schedules and requirements." },
-    { q: "Will I get a certificate?", a: "Yes, upon successful completion of your course and projects, you will receive a certificate of completion from Aeroverse Academy." },
+    { q: "Will I get a certificate?", a: "Yes, upon successful completion of your course and projects, you will receive a certificate of completion from Koyitech Africa." },
     { q: "Can I earn after learning?", a: "Absolutely. Our courses are specifically chosen based on their high market demand, focusing on skills that allow you to freelance or work remotely." },
   ];
 
@@ -79,7 +79,7 @@ export default function Landing() {
               <br className="hidden md:block" /> That Pay.
             </h1>
             <p className="text-lg text-white/80 max-w-lg leading-relaxed font-medium">
-              Guided by Experts, Built for Your Career. Bridge the gap between learning and earning. Aeroverse Academy provides tutor-led, practical training in high-demand digital skills designed to help Nigerians thrive in the global economy.
+              Guided by Experts, Built for Your Career. Bridge the gap between learning and earning. Koyitech Africa provides tutor-led, practical training in high-demand digital skills designed to help Nigerians thrive in the global economy.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -136,16 +136,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Welcome to Aeroverse Academy */}
+      {/* Welcome to Koyitech Africa */}
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div className="space-y-8 text-[#1a064f] dark:text-white">
               <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
-                Welcome to Aeroverse Academy
+                Welcome to Koyitech Africa
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                We believe that learning a digital skill shouldn't be a lonely journey of watching endless YouTube videos. Aeroverse Academy is a premier digital skills center where education meets mentorship. Our programs are designed for Nigerians who want to transition into tech, scale their freelance careers, or secure high-paying remote roles through structured, tutor-led guidance.
+                We believe that learning a digital skill shouldn't be a lonely journey of watching endless YouTube videos. Koyitech Africa is a premier digital skills center where education meets mentorship. Our programs are designed for Nigerians who want to transition into tech, scale their freelance careers, or secure high-paying remote roles through structured, tutor-led guidance.
               </p>
             </div>
 
@@ -221,7 +221,7 @@ export default function Landing() {
                 <span className="text-[#34d399]">Be mentored.</span>
               </h2>
               <p className="text-lg text-white/80 leading-relaxed font-medium">
-                We’ve removed the guesswork from online education. At Aeroverse, you aren't just a student—you are a protégé.
+                We’ve removed the guesswork from online education. At Koyitech, you aren't just a student—you are a protégé.
               </p>
               <div className="space-y-6">
                 {[
@@ -294,7 +294,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-8">
             {[
               { 
-                text: "I tried learning UI/UX on my own for months but felt stuck. At Aeroverse, having a tutor to point out my mistakes in real-time changed everything. I landed my first freelance gig before the course even ended!", 
+                text: "I tried learning UI/UX on my own for months but felt stuck. At Koyitech, having a tutor to point out my mistakes in real-time changed everything. I landed my first freelance gig before the course even ended!", 
                 name: "Chidi A.", location: "Lagos", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=150&q=80" 
               },
               { 
@@ -349,7 +349,7 @@ export default function Landing() {
             <div className="space-y-6">
               <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">About Us</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Aeroverse Academy is a leading digital skills provider in Nigeria dedicated to closing the skills gap in the global tech ecosystem. We specialize in human-centered learning, moving away from the "watch-only" model of online education to a more rigorous, tutor-supported framework.
+                Koyitech Africa is a leading digital skills provider in Nigeria dedicated to closing the skills gap in the global tech ecosystem. We specialize in human-centered learning, moving away from the "watch-only" model of online education to a more rigorous, tutor-supported framework.
               </p>
             </div>
             
@@ -422,7 +422,7 @@ export default function Landing() {
             <div className="space-y-4">
                <div className="flex items-center gap-3 text-2xl font-black tracking-tighter">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white italic">AA</div>
-                  Aeroverse Academy
+                  Koyitech Africa
                </div>
                <p className="text-white/60 text-sm max-w-xs font-medium">
                  Guided Learning. Practical Skills. Real Results.
@@ -440,7 +440,7 @@ export default function Landing() {
           </div>
           
           <div className="flex justify-between items-center text-sm text-white/50 font-medium">
-             <p>© 2026 Aeroverse Academy. All rights reserved.</p>
+             <p>© 2026 Koyitech Africa. All rights reserved.</p>
              <div className="hidden sm:flex items-center gap-6">
                 <span>Terms of Service</span>
                 <span>Privacy Policy</span>

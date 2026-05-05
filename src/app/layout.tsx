@@ -3,11 +3,11 @@ import type { Metadata } from 'next';
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: 'Aeroverse Academy | Master Digital Skills That Pay',
-  description: 'Aeroverse Academy provides tutor-led, practical training in high-demand digital skills for Nigerians. Bridge the gap between learning and earning.',
-  keywords: 'Digital Skills, Coding, UI/UX Design, Data Analysis, Nigeria Tech Education, Remote Work Skills, Aeroverse Academy',
+  title: 'Koyitech Africa | Master Digital Skills That Pay',
+  description: 'Koyitech Africa provides tutor-led, practical training in high-demand digital skills for Nigerians. Bridge the gap between learning and earning.',
+  keywords: 'Digital Skills, Coding, UI/UX Design, Data Analysis, Nigeria Tech Education, Remote Work Skills, Koyitech Africa',
   openGraph: {
-    title: 'Aeroverse Academy | Master Digital Skills That Pay',
+    title: 'Koyitech Africa | Master Digital Skills That Pay',
     description: 'Bridge the gap between learning and earning with tutor-led training.',
     type: 'website',
   },

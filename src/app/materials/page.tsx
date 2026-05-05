@@ -16,7 +16,7 @@ export default function MaterialsPage() {
     { title: "React Context API Guide & Cheat Sheet", type: "PDF", size: "1.8 MB" },
     { title: "UI Design Principles Toolkit", type: "ZIP", size: "15.2 MB" },
     { title: "Python Data Structures Overview", type: "PDF", size: "3.1 MB" },
-    { title: "Aeroverse Intro Class Recording", type: "MP4", size: "245.0 MB" },
+    { title: "Koyitech Intro Class Recording", type: "MP4", size: "245.0 MB" },
     { title: "Javascript ES6 Code Snippets", type: "ZIP", size: "4.7 MB" },
   ]);
 

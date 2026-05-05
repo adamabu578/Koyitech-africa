@@ -150,7 +150,7 @@ export default function AdminDashboard() {
                     Welcome back, <span className="text-indigo-600">{user?.firstName}</span>
                   </h2>
                   <p className="text-gray-500 text-sm mb-6 max-w-md">
-                    Manage the entire Aeroverse Academy platform from this control center. Review analytics, manage users, and configure system settings.
+                    Manage the entire Koyitech Africa platform from this control center. Review analytics, manage users, and configure system settings.
                   </p>
                   <div className="flex gap-3">
                     <button className="px-5 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm">

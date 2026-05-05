@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import { supabase } from "../../lib/supabase";
 
 export function Navbar() {
   const router = useRouter();
@@ -13,9 +14,22 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isInstructor, setIsInstructor] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const checkRole = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsAuthenticated(true);
+        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+        if (data?.role === 'admin') setIsAdmin(true);
+        if (data?.role === 'instructor') setIsInstructor(true);
+      }
+    };
+    checkRole();
   }, []);
 
   useEffect(() => {
@@ -41,7 +55,7 @@ export function Navbar() {
               className="text-2xl font-black font-outfit cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
               whileHover={{ scale: 1.02 }}
             >
-              <span className="hidden sm:block uppercase tracking-tight">Aeroverse Academy</span>
+              <span className="hidden sm:block uppercase tracking-tight">Koyitech Africa</span>
             </motion.div>
           </Link>
         </div>
@@ -68,12 +82,39 @@ export function Navbar() {
             )}
           </div>
 
-          <Link
-            href="/login"
-            className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
-          >
-            Register
-          </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="hidden sm:block text-white/90 hover:text-white font-bold tracking-tight"
+            >
+              Admin Panel
+            </Link>
+          )}
+
+          {isInstructor && (
+            <Link
+              href="/instructor"
+              className="hidden sm:block text-white/90 hover:text-white font-bold tracking-tight"
+            >
+              Instructor Panel
+            </Link>
+          )}
+
+          {!isAuthenticated ? (
+            <Link
+              href="/login"
+              className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
+            >
+              Register / Login
+            </Link>
+          ) : (
+            <Link
+              href="/dashboard"
+              className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
+            >
+              Dashboard
+            </Link>
+          )}
 
           <button
             className="lg:hidden p-2 text-white"
@@ -113,13 +154,44 @@ export function Navbar() {
               </a>
             ))}
             <hr className="border-white/10 my-2" />
-            <Link
-              href="/login"
-              className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Enrol Now/Register
-            </Link>
+            
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="p-4 text-white font-bold font-outfit tracking-tight rounded-xl text-center hover:bg-white/10"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Admin Panel
+              </Link>
+            )}
+            
+            {isInstructor && (
+              <Link
+                href="/instructor"
+                className="p-4 text-white font-bold font-outfit tracking-tight rounded-xl text-center hover:bg-white/10"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Instructor Panel
+              </Link>
+            )}
+
+            {!isAuthenticated ? (
+              <Link
+                href="/login"
+                className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Enrol Now/Register
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard"
+                className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Go to Dashboard
+              </Link>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
