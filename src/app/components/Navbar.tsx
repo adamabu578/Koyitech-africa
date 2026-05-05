@@ -14,22 +14,8 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isInstructor, setIsInstructor] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
     setMounted(true);
-    const checkRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setIsAuthenticated(true);
-        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-        if (data?.role === 'admin') setIsAdmin(true);
-        if (data?.role === 'instructor') setIsInstructor(true);
-      }
-    };
-    checkRole();
   }, []);
 
   useEffect(() => {
@@ -82,39 +68,12 @@ export function Navbar() {
             )}
           </div>
 
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="hidden sm:block text-white/90 hover:text-white font-bold tracking-tight"
-            >
-              Admin Panel
-            </Link>
-          )}
-
-          {isInstructor && (
-            <Link
-              href="/instructor"
-              className="hidden sm:block text-white/90 hover:text-white font-bold tracking-tight"
-            >
-              Instructor Panel
-            </Link>
-          )}
-
-          {!isAuthenticated ? (
-            <Link
-              href="/login"
-              className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
-            >
-              Register / Login
-            </Link>
-          ) : (
-            <Link
-              href="/dashboard"
-              className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
-            >
-              Dashboard
-            </Link>
-          )}
+          <Link
+            href="/login"
+            className="hidden sm:block bg-white text-[#181059] px-6 py-2.5 rounded-lg font-bold font-outfit tracking-tight hover:bg-white/90 transition-all text-sm"
+          >
+            Register
+          </Link>
 
           <button
             className="lg:hidden p-2 text-white"
@@ -155,43 +114,13 @@ export function Navbar() {
             ))}
             <hr className="border-white/10 my-2" />
             
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className="p-4 text-white font-bold font-outfit tracking-tight rounded-xl text-center hover:bg-white/10"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Admin Panel
-              </Link>
-            )}
-            
-            {isInstructor && (
-              <Link
-                href="/instructor"
-                className="p-4 text-white font-bold font-outfit tracking-tight rounded-xl text-center hover:bg-white/10"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Instructor Panel
-              </Link>
-            )}
-
-            {!isAuthenticated ? (
-              <Link
-                href="/login"
-                className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Enrol Now/Register
-              </Link>
-            ) : (
-              <Link
-                href="/dashboard"
-                className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Go to Dashboard
-              </Link>
-            )}
+            <Link
+              href="/login"
+              className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Enrol Now/Register
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
