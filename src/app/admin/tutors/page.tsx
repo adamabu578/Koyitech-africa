@@ -136,6 +136,13 @@ export default function AdminTutors() {
                             <div>
                               <p className="font-medium text-gray-800">{tutor.first_name} {tutor.last_name}</p>
                               <p className="text-xs text-gray-500">{tutor.email}</p>
+                              {(tutor.subjects || tutor.experience) && (
+                                <p className="text-[10px] text-gray-400 mt-0.5">
+                                  {tutor.subjects && <span>{tutor.subjects}</span>}
+                                  {tutor.subjects && tutor.experience && <span> • </span>}
+                                  {tutor.experience && <span>{tutor.experience} yr(s) exp</span>}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -143,7 +150,7 @@ export default function AdminTutors() {
                           {new Date(tutor.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
-                          {tutor.role === 'pending_instructor' ? (
+                          {tutor.status === 'pending' || tutor.role === 'pending_instructor' ? (
                             <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
                               Pending Approval
                             </span>
@@ -155,24 +162,43 @@ export default function AdminTutors() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {tutor.role === 'pending_instructor' && (
-                              <button 
-                                onClick={async () => {
-                                  try {
-                                    const { error } = await supabase
-                                      .from('profiles')
-                                      .update({ role: 'instructor' })
-                                      .eq('id', tutor.id);
-                                    if (error) throw error;
-                                    setTutors(tutors.map(t => t.id === tutor.id ? { ...t, role: 'instructor' } : t));
-                                  } catch (err) {
-                                    console.error(err);
-                                  }
-                                }}
-                                className="px-3 py-1 bg-green-500 text-white rounded text-xs font-bold hover:bg-green-600 transition-colors"
-                              >
-                                Approve
-                              </button>
+                            {(tutor.status === 'pending' || tutor.role === 'pending_instructor') && (
+                              <>
+                                <button 
+                                  onClick={async () => {
+                                    try {
+                                      const { error } = await supabase
+                                        .from('profiles')
+                                        .update({ status: 'active', role: 'instructor' })
+                                        .eq('id', tutor.id);
+                                      if (error) throw error;
+                                      setTutors(tutors.map(t => t.id === tutor.id ? { ...t, status: 'active', role: 'instructor' } : t));
+                                    } catch (err) {
+                                      console.error(err);
+                                    }
+                                  }}
+                                  className="px-3 py-1 bg-green-500 text-white rounded text-xs font-bold hover:bg-green-600 transition-colors"
+                                >
+                                  Approve
+                                </button>
+                                <button 
+                                  onClick={async () => {
+                                    try {
+                                      const { error } = await supabase
+                                        .from('profiles')
+                                        .update({ status: 'rejected' })
+                                        .eq('id', tutor.id);
+                                      if (error) throw error;
+                                      setTutors(tutors.map(t => t.id === tutor.id ? { ...t, status: 'rejected' } : t));
+                                    } catch (err) {
+                                      console.error(err);
+                                    }
+                                  }}
+                                  className="px-3 py-1 bg-red-500 text-white rounded text-xs font-bold hover:bg-red-600 transition-colors"
+                                >
+                                  Reject
+                                </button>
+                              </>
                             )}
                             <button className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-md hover:bg-indigo-50 transition-colors">
                               <MoreVertical className="w-4 h-4" />

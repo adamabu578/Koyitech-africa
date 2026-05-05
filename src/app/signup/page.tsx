@@ -18,16 +18,25 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Tutor application fields
+  const [subjects, setSubjects] = useState("");
+  const [experience, setExperience] = useState("");
+  const [bio, setBio] = useState("");
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName || !lastName || !email || !password) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all basic fields");
+      return;
+    }
+
+    if (role === "instructor" && (!subjects || !experience || !bio)) {
+      toast.error("Please fill in all application fields");
       return;
     }
 
     setIsLoading(true);
     let finalRole = role;
-    if (role === "instructor") finalRole = "pending_instructor";
     if (email.includes("admin")) finalRole = "admin";
 
     const { data, error } = await supabase.auth.signUp({
@@ -38,6 +47,8 @@ export default function Signup() {
           firstName,
           lastName,
           role: finalRole,
+          status: role === "instructor" ? "pending" : "active",
+          ...(role === "instructor" ? { subjects, experience, bio } : {})
         }
       }
     });
@@ -49,7 +60,11 @@ export default function Signup() {
       return;
     }
 
-    toast.success("Account created successfully!");
+    if (role === "instructor") {
+      toast.success("Application submitted! We will review it shortly.");
+    } else {
+      toast.success("Account created successfully!");
+    }
     router.push("/login");
   };
 
@@ -155,8 +170,8 @@ export default function Signup() {
                     type="button"
                     onClick={() => setRole("student")}
                     className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${role === "student"
-                        ? "bg-indigo-50 border-indigo-200 text-indigo-700"
-                        : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
+                      ? "bg-indigo-50 border-indigo-200 text-indigo-700"
+                      : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
                       }`}
                   >
                     Student
@@ -165,14 +180,53 @@ export default function Signup() {
                     type="button"
                     onClick={() => setRole("instructor")}
                     className={`py-3 px-4 rounded-xl border text-sm font-medium transition-all ${role === "instructor"
-                        ? "bg-indigo-50 border-indigo-200 text-indigo-700"
-                        : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
+                      ? "bg-indigo-50 border-indigo-200 text-indigo-700"
+                      : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
                       }`}
                   >
                     Tutor
                   </button>
                 </div>
               </div>
+
+              {role === "instructor" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="space-y-5 border-t border-gray-100 pt-5 mt-5"
+                >
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-gray-500">What course do you want to teach?</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Digital marketing,graphic design,data analytics"
+                      value={subjects}
+                      onChange={(e) => setSubjects(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-gray-500">Years of Experience</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 5"
+                      value={experience}
+                      onChange={(e) => setExperience(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-gray-500">Short Bio / Motivation</label>
+                    <textarea
+                      placeholder="Tell us about your background and why you want to teach..."
+                      rows={3}
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm resize-none"
+                    />
+                  </div>
+                </motion.div>
+              )}
 
               {/* Fake Cloudflare Verify */}
               <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between bg-gray-50max-w-[280px]">
@@ -200,7 +254,7 @@ export default function Signup() {
                 disabled={isLoading}
                 className="w-full bg-[#3b4b96] text-white py-3.5 rounded-lg text-sm font-medium hover:bg-[#2b3a7a] transition-colors disabled:opacity-50"
               >
-                {isLoading ? "Signing up..." : "Sign up"}
+                {isLoading ? (role === "instructor" ? "Submitting..." : "Signing up...") : (role === "instructor" ? "Submit Application" : "Sign up")}
               </button>
 
               <p className="text-sm text-gray-600 pt-4 text-center">

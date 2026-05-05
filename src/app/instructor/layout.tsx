@@ -27,7 +27,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         // Fetch the fresh role from the database to prevent localStorage tampering
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("role")
+          .select("role, status")
           .eq("id", currentUser.id)
           .single();
 
@@ -41,7 +41,7 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         }
 
         const rawRole = profile?.role || currentUser.role;
-        const userStatus = rawRole === "pending_instructor" ? "pending" : "active";
+        const userStatus = profile?.status === "pending" || rawRole === "pending_instructor" ? "pending" : "active";
         setStatus(userStatus);
 
         // Update local storage to keep it in sync
@@ -49,7 +49,6 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
 
         const isProfile = pathname === "/instructor/profile";
         if (userStatus === "pending" && !isProfile) {
-          setIsChecking(false);
           toast.error("Confirmation yet from admin approval pending", { id: "pending-toast" });
           router.push("/");
           return;
@@ -59,7 +58,6 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         console.error("Error verifying instructor status", err);
         // On fatal error, assume pending to be safe
         setStatus("pending");
-        setIsChecking(false);
         toast.error("Confirmation yet from admin approval pending", { id: "pending-toast" });
         router.push("/");
         return;

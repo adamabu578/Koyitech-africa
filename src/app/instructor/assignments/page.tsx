@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import {
   CheckSquare, Plus, FileText, ChevronRight,
-  MessageSquare, Star, Upload
+  MessageSquare, Star, Upload, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "../../../lib/supabase";
@@ -20,8 +20,8 @@ export default function InstructorAssignments() {
   const [file, setFile] = useState<File | null>(null);
 
   const defaultAssignments = [
-    { title: "Landing Page Wireframe", course: "UI/UX Design Masterclass", deadline: "Oct 28, 2026", submissions: 32, instruction: "Design a wireframe for a real estate landing page..." },
-    { title: "Visual Style Guide", course: "Visual Communication Basics", deadline: "Nov 05, 2026", submissions: 15, instruction: "Create a comprehensive style guide..." },
+    { id: 1, title: "Landing Page Wireframe", course: "UI/UX Design Masterclass", deadline: "Oct 28, 2026", submissions: 32, instruction: "Design a wireframe for a real estate landing page..." },
+    { id: 2, title: "Visual Style Guide", course: "Visual Communication Basics", deadline: "Nov 05, 2026", submissions: 15, instruction: "Create a comprehensive style guide..." },
   ];
 
   const fetchAssignments = async () => {
@@ -96,7 +96,7 @@ export default function InstructorAssignments() {
     toast.dismiss();
 
     if (error) {
-      toast.error("Failed to publish assignment.");
+      toast.error(`Failed to publish assignment: ${error.message || error.details}`);
       console.error(error);
       return;
     }
@@ -121,6 +121,46 @@ export default function InstructorAssignments() {
     setDeadline("");
     setFile(null);
     setActiveTab("assignments");
+  };
+
+  const handleDeleteAssignment = async (id: any, fileUrl?: string, title?: string) => {
+    toast("Delete Assignment?", {
+      id: "delete-confirm",
+      description: "Are you sure you want to delete this assignment? This cannot be undone.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          toast.dismiss("delete-confirm");
+          if (typeof id === 'number' || !id) {
+            // Use ID if available, otherwise fallback to title for demo assignments during HMR
+            setAssignments(prev => prev.filter(a => a.id ? a.id !== id : a.title !== title));
+            toast.success("Assignment deleted.", { id: "delete-success" });
+            return;
+          }
+          
+          const loadingId = toast.loading("Deleting assignment...");
+          if (fileUrl) {
+            const urlParts = fileUrl.split('/');
+            const fileName = urlParts[urlParts.length - 1];
+            await supabase.storage.from('assignments').remove([fileName]);
+          }
+          const { error } = await supabase.from('assignments').delete().eq('id', id);
+          toast.dismiss(loadingId);
+          
+          if (error) {
+            toast.error("Failed to delete assignment.", { id: "delete-error" });
+            console.error(error);
+          } else {
+            toast.success("Assignment deleted.", { id: "delete-success" });
+            setAssignments(prev => prev.filter(a => a.id !== id));
+          }
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => toast.dismiss("delete-confirm")
+      }
+    });
   };
 
   return (
@@ -191,12 +231,22 @@ export default function InstructorAssignments() {
                         <p className="text-xl md:text-2xl font-black">{assignment.submissions}</p>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Submissions</p>
                       </div>
-                      <button
-                        onClick={() => setActiveTab("submissions")}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-xl flex items-center justify-center text-foreground hover:bg-primary/10 hover:text-primary transition-colors shrink-0"
-                      >
-                        <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleDeleteAssignment(assignment.id, assignment.fileUrl, assignment.title)}
+                          className="w-10 h-10 md:w-12 md:h-12 bg-red-50 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shrink-0"
+                          title="Delete Assignment"
+                        >
+                          <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
+                        </button>
+                        <button
+                          onClick={() => setActiveTab("submissions")}
+                          className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-xl flex items-center justify-center text-foreground hover:bg-primary/10 hover:text-primary transition-colors shrink-0"
+                          title="View Submissions"
+                        >
+                          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -2,16 +2,40 @@
 
 import { useState } from "react";
 import { Sidebar } from "../../components/Sidebar";
-import { PencilLine, Plus, Search, ChevronRight } from "lucide-react";
+import { PencilLine, Plus, Search, ChevronRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function InstructorQuizzes() {
   const [activeTab, setActiveTab] = useState("list");
   
+  const [quizzes, setQuizzes] = useState([
+    { id: 1, title: "Color Theory Basics", course: "Visual Communication Basics", questions: 10, attempts: 24 },
+    { id: 2, title: "Figma Shortcuts Quiz", course: "UI/UX Design Masterclass", questions: 15, attempts: 42 },
+  ]);
+
   const [question, setQuestion] = useState("");
   const [option1, setOption1] = useState("");
   const [option2, setOption2] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
+
+  const handleDeleteQuiz = (id: number) => {
+    toast("Delete Quiz?", {
+      id: "delete-confirm",
+      description: "Are you sure you want to delete this quiz? This cannot be undone.",
+      action: {
+        label: "Delete",
+        onClick: () => {
+          toast.dismiss("delete-confirm");
+          setQuizzes(prev => prev.filter(q => q.id !== id));
+          toast.success("Quiz deleted.", { id: "delete-success" });
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => toast.dismiss("delete-confirm")
+      }
+    });
+  };
 
   const handleCreateQuiz = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,11 +94,8 @@ export default function InstructorQuizzes() {
           <div className="mt-8">
             {activeTab === "list" && (
               <div className="space-y-6">
-                {[
-                  { title: "Color Theory Basics", course: "Visual Communication Basics", questions: 10, attempts: 24 },
-                  { title: "Figma Shortcuts Quiz", course: "UI/UX Design Masterclass", questions: 15, attempts: 42 },
-                ].map((quiz, i) => (
-                  <div key={i} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group hover:border-primary transition-all">
+                {quizzes.map((quiz) => (
+                  <div key={quiz.id} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group hover:border-primary transition-all">
                     <div className="flex items-start sm:items-center gap-4 md:gap-6 w-full sm:w-auto">
                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                           <PencilLine className="w-6 h-6 md:w-8 md:h-8" />
@@ -89,9 +110,18 @@ export default function InstructorQuizzes() {
                           <p className="text-xl md:text-2xl font-black">{quiz.attempts}</p>
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Attempts</p>
                        </div>
-                       <button className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-xl flex items-center justify-center text-foreground hover:bg-primary/10 hover:text-primary transition-colors shrink-0">
-                          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-                       </button>
+                       <div className="flex gap-2">
+                         <button 
+                           onClick={() => handleDeleteQuiz(quiz.id)}
+                           className="w-10 h-10 md:w-12 md:h-12 bg-red-50 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shrink-0"
+                           title="Delete Quiz"
+                         >
+                            <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
+                         </button>
+                         <button className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-xl flex items-center justify-center text-foreground hover:bg-primary/10 hover:text-primary transition-colors shrink-0">
+                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                         </button>
+                       </div>
                     </div>
                   </div>
                 ))}

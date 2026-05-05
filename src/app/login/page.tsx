@@ -43,7 +43,7 @@ export default function Login() {
         .single();
         
       const rawRole = profile?.role || data.user.user_metadata?.role || 'student';
-      const isPendingInstructor = rawRole === 'pending_instructor';
+      const isPendingInstructor = rawRole === 'pending_instructor' || (rawRole === 'instructor' && profile?.status === 'pending');
       const userRole = isPendingInstructor ? 'instructor' : rawRole;
       
       // Keep currentUser in localStorage for compatibility during transition
@@ -53,7 +53,7 @@ export default function Login() {
         firstName: profile?.first_name || data.user.user_metadata?.firstName || '',
         lastName: profile?.last_name || data.user.user_metadata?.lastName || '',
         role: userRole,
-        status: isPendingInstructor ? 'pending' : 'active'
+        status: isPendingInstructor ? 'pending' : (profile?.status || 'active')
       };
       
       localStorage.setItem('currentUser', JSON.stringify(userData));

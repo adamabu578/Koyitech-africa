@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "../../components/Sidebar";
-import { FileText, Search, Upload, Download, MoreVertical, BookOpen, FileArchive } from "lucide-react";
+import { FileText, Search, Upload, Download, MoreVertical, BookOpen, FileArchive, Trash2 } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
 import { toast } from "sonner";
 
@@ -101,6 +101,43 @@ export default function InstructorMaterials() {
     }
   };
 
+  const handleDeleteMaterial = async (id: any, fileName: string) => {
+    toast("Delete Material?", {
+      id: "delete-confirm",
+      description: "Are you sure you want to delete this material? This cannot be undone.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          toast.dismiss("delete-confirm");
+          if (typeof id === 'number') {
+            setMaterials(prev => prev.filter(m => m.id !== id));
+            toast.success("Material deleted.", { id: "delete-success" });
+            return;
+          }
+          
+          const loadingId = toast.loading("Deleting material...");
+          if (fileName) {
+            await supabase.storage.from('materials').remove([fileName]);
+          }
+          const { error } = await supabase.from('materials').delete().eq('id', id);
+          toast.dismiss(loadingId);
+          
+          if (error) {
+            toast.error("Failed to delete material.", { id: "delete-error" });
+            console.error(error);
+          } else {
+            toast.success("Material deleted.", { id: "delete-success" });
+            setMaterials(prev => prev.filter(m => m.id !== id));
+          }
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => toast.dismiss("delete-confirm")
+      }
+    });
+  };
+
   return (
     <div className="flex min-h-screen bg-muted/30 dark:bg-background">
       <Sidebar userType="instructor" />
@@ -180,8 +217,11 @@ export default function InstructorMaterials() {
                             >
                                <Download size={18} />
                             </button>
-                            <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
-                               <MoreVertical size={18} />
+                            <button 
+                              onClick={() => handleDeleteMaterial(mat.id, mat.name)}
+                              className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                            >
+                               <Trash2 size={18} />
                             </button>
                          </div>
                       </div>
