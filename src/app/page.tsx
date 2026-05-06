@@ -17,16 +17,16 @@ export default function Landing() {
 
   const courses = [
     { title: "Geography Sensing & GIS", category: "Data", icon: Map, image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80", desc: "Master spatial data analysis and mapping. Learn to interpret geographic patterns to solve complex environmental and urban challenges." },
-    { title: "Social Media Management", category: "Marketing", icon: Share2, image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80", desc: 'Go beyond "posting." Learn to build brands, manage online communities, and create viral content strategies that convert.' },
+    { title: "Social Media Management", category: "Marketing", icon: Share2, image: "/social-media.jpg", desc: 'Go beyond "posting." Learn to build brands, manage online communities, and create viral content strategies that convert.' },
     { title: "Digital Marketing", category: "Marketing", icon: Globe, image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80", desc: "Master SEO, PPC, and email marketing. Learn how to drive traffic and scale businesses using the power of the internet." },
-    { title: "Graphics Design", category: "Design", icon: Palette, image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80", desc: "Turn your creativity into a career. Learn the principles of visual communication and master industry-standard design tools." },
-    { title: "UI/UX Design", category: "Design", icon: Layout, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&q=80", desc: "Create digital experiences people love. Learn to design intuitive interfaces and user journeys for mobile apps and websites." },
-    { title: "Data Analysis", category: "Data", icon: BarChart3, image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80", desc: "Turn raw numbers into powerful insights. Master Excel, SQL, and PowerBI to help companies make data-driven decisions." },
-    { title: "Virtual Assistant / Remote Work", category: "Business", icon: Briefcase, image: "https://images.unsplash.com/photo-1590402494587-44b71d7772f6?auto=format&fit=crop&w=600&q=80", desc: "Learn the administrative and organizational skills needed to support international clients and thrive in the remote workspace." },
-    { title: "Cybersecurity", category: "IT", icon: Shield, image: "/cyber_security.png", desc: "Protect the digital world. Learn the fundamentals of network security, ethical hacking, and data protection strategies." },
-    { title: "AI Productivity", category: "Tech", icon: Rocket, image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80", desc: "Work smarter, not harder. Master AI tools to automate your workflow, create content faster, and 10x your professional output." },
-    { title: "Project Management", category: "Business", icon: Target, image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80", desc: "Lead teams to success. Learn the frameworks and methodologies (Agile, Scrum) used by top tech companies globally." },
-    { title: "Web Development", category: "Tech", icon: Database, image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", desc: "Build the internet. From HTML to modern frameworks, learn to create responsive, functional, and beautiful websites from scratch." },
+    { title: "Graphics Design", category: "Design", icon: Palette, image: "/graphic-design.jpg", desc: "Turn your creativity into a career. Learn the principles of visual communication and master industry-standard design tools." },
+    { title: "UI/UX Design", category: "Design", icon: Layout, image: "/user-interface.jpg", desc: "Create digital experiences people love. Learn to design intuitive interfaces and user journeys for mobile apps and websites." },
+    { title: "Data Analysis", category: "Data", icon: BarChart3, image: "/data-analytics.jpg", desc: "Turn raw numbers into powerful insights. Master Excel, SQL, and PowerBI to help companies make data-driven decisions." },
+    { title: "Virtual Assistant / Remote Work", category: "Business", icon: Briefcase, image: "/virtual-assistant.jpg", desc: "Learn the administrative and organizational skills needed to support international clients and thrive in the remote workspace." },
+    { title: "Cybersecurity", category: "IT", icon: Shield, image: "/cybersecurity.jpg", desc: "Protect the digital world. Learn the fundamentals of network security, ethical hacking, and data protection strategies." },
+    { title: "AI Productivity", category: "Tech", icon: Rocket, image: "/ai-productivity.jpg", desc: "Work smarter, not harder. Master AI tools to automate your workflow, create content faster, and 10x your professional output." },
+    { title: "Project Management", category: "Business", icon: Target, image: "/project-management.jpg", desc: "Lead teams to success. Learn the frameworks and methodologies (Agile, Scrum) used by top tech companies globally." },
+    { title: "Web Development", category: "Tech", icon: Database, image: "/webdev.jpg", desc: "Build the internet. From HTML to modern frameworks, learn to create responsive, functional, and beautiful websites from scratch." },
   ];
 
   const faqs = [
@@ -245,7 +245,7 @@ export default function Landing() {
             
             <div className="relative">
               <div className="bg-white/10 backdrop-blur-md rounded-[2rem] p-8 border border-white/20">
-                 <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80" alt="Tutor Session" className="rounded-xl w-full h-auto shadow-2xl" />
+                 <img src="/africa.jpg" alt="Tutor Session" className="rounded-xl w-full h-auto shadow-2xl" />
               </div>
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#34d399]/20 rounded-full blur-3xl animate-pulse" />
             </div>
@@ -299,7 +299,7 @@ export default function Landing() {
               },
               { 
                 text: "The Data Analysis course was intense but so rewarding. The mentorship didn't just teach me tools; it taught me how to think like an analyst. Highly recommended for anyone serious about tech.", 
-                name: "Sarah O.", location: "Abuja", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+                name: "Sarah O.", location: "Abuja", avatar: "/profile.jpg"
               },
             ].map((testi, i) => (
               <div key={i} className="bg-white dark:bg-slate-900 p-10 rounded-3xl border border-border shadow-xl">
@@ -434,7 +434,7 @@ export default function Landing() {
                  onClick={() => router.push("/signup")}
                  className="px-8 py-3 bg-[#5b4fff] text-white rounded-lg font-bold hover:bg-[#4a3ecc] transition-colors shadow-lg"
                >
-                 Register Now and Secure Your Future
+                 Join Koyitech Africa and secure your future.
                </button>
             </div>
           </div>
