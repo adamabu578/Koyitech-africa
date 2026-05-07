@@ -128,8 +128,8 @@ export default function StudentDashboard() {
                     </div>
                     <div className="space-y-6">
                       {[
-                        { title: "UI/UX Design Masterclass", progress: 78, color: "bg-[#4ade80]" },
-                        { title: "Data Analysis Essentials", progress: 30, color: "bg-[#fca566]" },
+                        { title: "UI/UX Design", progress: 78, color: "bg-[#4ade80]" },
+                        { title: "Data Analysis", progress: 30, color: "bg-[#fca566]" },
                       ].map((course, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-sm mb-2">
@@ -201,10 +201,10 @@ export default function StudentDashboard() {
                         </thead>
                         <tbody>
                           {[
-                            { rank: 1, name: "Jerome Bell", course: "UI/UX Masterclass", score: "5520 points", active: true, img: "J" },
+                            { rank: 1, name: "Jerome Bell", course: "UI/UX Design", score: "5520 points", active: true, img: "J" },
                             { rank: 2, name: "Courtney Henry", course: "Data Analysis", score: "5140 points", active: false, img: "C" },
-                            { rank: 3, name: "Arlene McCoy", course: "Web Dev Bootcamp", score: "4780 points", active: false, img: "A" },
-                            { rank: 4, name: "Darrell Steward", course: "Python Basics", score: "4520 points", active: false, img: "D" },
+                            { rank: 3, name: "Arlene McCoy", course: "Web Development", score: "4780 points", active: false, img: "A" },
+                            { rank: 4, name: "Darrell Steward", course: "AI Productivity", score: "4520 points", active: false, img: "D" },
                           ].map((row, i) => (
                             <tr key={i} className={`border-b last:border-0 border-slate-50 dark:border-slate-800/50 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/50 ${row.active ? 'bg-orange-50/30 dark:bg-orange-500/10' : ''}`}>
                               <td className="py-4 px-6">

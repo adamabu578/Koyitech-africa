@@ -3,17 +3,26 @@
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import { useTheme } from "next-themes";
 
 export default function Login() {
   const router = useRouter();
+  const { setTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Ensure light mode is activated by default on mobile devices
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setTheme("light");
+    }
+  }, [setTheme]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

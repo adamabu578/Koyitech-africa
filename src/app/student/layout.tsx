@@ -20,19 +20,19 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       const isProfile = pathname === "/student/profile";
 
       if (!isProfile) {
-        try {
-          const enrolledCourses = localStorage.getItem("enrolledCourses");
-          const parsed = enrolledCourses ? JSON.parse(enrolledCourses) : [];
-          if (!parsed || parsed.length === 0) {
-            toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
-            router.push("/courses");
-            return;
-          }
-        } catch (err) {
-          toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
-          router.push("/courses");
-          return;
-        }
+        // try {
+        //   const enrolledCourses = localStorage.getItem("enrolledCourses");
+        //   const parsed = enrolledCourses ? JSON.parse(enrolledCourses) : [];
+        //   if (!parsed || parsed.length === 0) {
+        //     toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
+        //     router.push("/courses");
+        //     return;
+        //   }
+        // } catch (err) {
+        //   toast.error("Please enroll in a course to access this page.", { id: "enroll-toast" });
+        //   router.push("/courses");
+        //   return;
+        // }
       }
 
       setIsChecking(false);

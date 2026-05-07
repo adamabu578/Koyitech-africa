@@ -10,18 +10,18 @@ export default function MyCourses() {
 
   const courses = [
     {
-      id: "1",
-      title: "UI/UX Design Masterclass",
-      tutor: "Sarah O.",
+      id: "5",
+      title: "UI/UX Design",
+      tutor: "Jane Doe",
       progress: 75,
       totalModules: 12,
       completedModules: 9,
       status: "In Progress"
     },
     {
-      id: "2",
-      title: "Data Analysis Essentials",
-      tutor: "Mike J.",
+      id: "6",
+      title: "Data Analysis",
+      tutor: "John Smith",
       progress: 30,
       totalModules: 10,
       completedModules: 3,

@@ -2,11 +2,11 @@
 
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { 
-  Users, BookOpen, Award, CheckCircle2, 
-  ArrowRight, Play, Star, Map, 
-  Share2, BarChart3, Palette, Layout, 
-  Database, Shield, Zap, Rocket, 
+import {
+  Users, BookOpen, Award, CheckCircle2,
+  ArrowRight, Play, Star, Map,
+  Share2, BarChart3, Palette, Layout,
+  Database, Shield, Zap, Rocket,
   Globe, MessageSquare, HelpCircle,
   Clock, Target, GraduationCap, Briefcase
 } from "lucide-react";
@@ -45,22 +45,22 @@ export default function Landing() {
       <section className="relative pt-32 pb-40 lg:pb-56 overflow-hidden bg-[#181059] dark:bg-slate-950 text-white">
         {/* Background Decorative Stars and Elements */}
         <div className="absolute top-20 left-20">
-           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-white/20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-white/20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         </div>
         <div className="absolute top-1/2 left-1/3">
-           <div className="w-2 h-2 bg-white/20 rounded-full"></div>
+          <div className="w-2 h-2 bg-white/20 rounded-full"></div>
         </div>
 
 
         {/* Mobile Background Image */}
         <div className="absolute inset-0 z-0 lg:hidden">
-           <img 
-             src="/guy.jpeg" 
-             alt="Student Learning" 
-             className="w-full h-full object-cover object-top opacity-70" 
-           />
-           {/* Overlay to ensure text readability */}
-           <div className="absolute inset-0 bg-gradient-to-b from-[#181059]/10 via-[#181059]/50 to-[#181059]"></div>
+          <img
+            src="/guy.jpeg"
+            alt="Student Learning"
+            className="w-full h-full object-cover object-top opacity-70"
+          />
+          {/* Overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#181059]/10 via-[#181059]/50 to-[#181059]"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -73,15 +73,15 @@ export default function Landing() {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]">
               Master the <br className="hidden md:block" />
               <span className="relative inline-block pb-2">
-                Digital Skills 
+                Digital Skills
                 <span className="absolute bottom-0 left-0 w-full h-1 bg-[#34d399]"></span>
               </span>
               <br className="hidden md:block" /> That Pay.
             </h1>
             <p className="text-lg text-white/80 max-w-lg leading-relaxed font-medium">
-              Guided by Experts, Built for Your Career. Bridge the gap between learning and earning. Koyitech Africa provides tutor-led, practical training in high-demand digital skills designed to help Nigerians thrive in the global economy.
+              We believe that learning a digital skill shouldn't be a lonely journey of watching endless YouTube videos and having to join several academy. Koyitech Africa is a premier digital skills center where education meets mentorship. Our programs are designed for Africans who want to transition into tech, scale their freelance careers, or secure high-paying remote roles through structured, tutor-led guidance.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => router.push("/signup")}
@@ -99,33 +99,33 @@ export default function Landing() {
           </motion.div>
 
           <div className="relative hidden lg:flex justify-end h-[600px] items-center">
-             
-             {/* Single Large Main Image */}
-             <motion.div 
-               initial={{ opacity: 0, scale: 0.95, y: 20 }}
-               animate={{ opacity: 1, scale: 1, y: 0 }}
-               transition={{ duration: 0.8, delay: 0.2 }}
-               className="relative z-20 w-[600px] h-[600px]"
-             >
-                <div className="absolute inset-0 rounded-[3rem] overflow-hidden shadow-2xl">
-                   <img 
-                     src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" 
-                     alt="Students Learning" 
-                     className="w-full h-full object-cover" 
-                   />
+
+            {/* Single Large Main Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative z-20 w-[600px] h-[600px]"
+            >
+              <div className="absolute inset-0 rounded-[3rem] overflow-hidden shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+                  alt="Students Learning"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Floating Badge aligned on left edge */}
+              <div className="absolute bottom-16 -left-12 bg-white text-gray-900 rounded-2xl px-6 py-5 shadow-2xl flex items-center gap-4 z-30 transform hover:scale-105 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-[#5b4fff]">
+                  <Award className="w-6 h-6" />
                 </div>
-                
-                {/* Floating Badge aligned on left edge */}
-                <div className="absolute bottom-16 -left-12 bg-white text-gray-900 rounded-2xl px-6 py-5 shadow-2xl flex items-center gap-4 z-30 transform hover:scale-105 transition-transform duration-300">
-                   <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-[#5b4fff]">
-                      <Award className="w-6 h-6" />
-                   </div>
-                   <div>
-                     <p className="text-xs text-[#5b4fff] font-black uppercase tracking-widest mb-1">Guaranteed</p>
-                     <p className="text-sm font-bold text-gray-900 leading-tight">Practical & <br/>Job-Ready Skills</p>
-                   </div>
+                <div>
+                  <p className="text-xs text-[#5b4fff] font-black uppercase tracking-widest mb-1">Guaranteed</p>
+                  <p className="text-sm font-bold text-gray-900 leading-tight">Practical & <br />Job-Ready Skills</p>
                 </div>
-             </motion.div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -145,7 +145,7 @@ export default function Landing() {
                 Welcome to Koyitech Africa
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                We believe that learning a digital skill shouldn't be a lonely journey of watching endless YouTube videos. Koyitech Africa is a premier digital skills center where education meets mentorship. Our programs are designed for Nigerians who want to transition into tech, scale their freelance careers, or secure high-paying remote roles through structured, tutor-led guidance.
+                We believe that learning a digital skill shouldn't be a lonely journey of watching endless YouTube videos. Koyitech Africa is a premier digital skills center where education meets mentorship. Our programs are designed to help africans thrive who want to transition into tech, scale their freelance careers, or secure high-paying remote roles through structured, tutor-led guidance.
               </p>
             </div>
 
@@ -177,37 +177,37 @@ export default function Landing() {
       {/* 2. Our Courses */}
       <section id="courses" className="py-24 bg-muted/30 border-t border-border/50">
         <div className="max-w-7xl mx-auto px-6">
-           <div className="text-center mb-16 space-y-4">
-              <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">Our Courses</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Start your journey with a curriculum designed for the modern job market.
-              </p>
-           </div>
-           
-           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {courses.map((course, i) => (
-                 <div key={i} className="bg-white dark:bg-gray-900 border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all group flex flex-col hover:-translate-y-1">
-                    <div className="relative h-48 overflow-hidden">
-                       <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                       <div className="absolute top-3 left-3 bg-[#5b4fff] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                          {course.category}
-                       </div>
-                    </div>
-                    
-                    <div className="p-6 flex-1 flex flex-col">
-                       <h3 className="font-bold text-lg text-[#1a064f] dark:text-white mb-3 group-hover:text-[#5b4fff] transition-colors leading-tight">
-                          {course.title}
-                       </h3>
-                       <p className="text-sm text-muted-foreground mb-6 flex-1">
-                          {course.desc}
-                       </p>
-                       <button onClick={() => router.push("/payment/1")} className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-[#5b4fff] font-bold rounded-xl group-hover:bg-[#5b4fff] group-hover:text-white transition-colors flex justify-center items-center gap-2">
-                          Enroll Course <ArrowRight className="w-4 h-4" />
-                       </button>
-                    </div>
-                 </div>
-              ))}
-           </div>
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">Our Courses</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Start your journey with a curriculum designed for the modern job market.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {courses.map((course, i) => (
+              <div key={i} className="bg-white dark:bg-gray-900 border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all group flex flex-col hover:-translate-y-1">
+                <div className="relative h-48 overflow-hidden">
+                  <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute top-3 left-3 bg-[#5b4fff] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    {course.category}
+                  </div>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="font-bold text-lg text-[#1a064f] dark:text-white mb-3 group-hover:text-[#5b4fff] transition-colors leading-tight">
+                    {course.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-6 flex-1">
+                    {course.desc}
+                  </p>
+                  <button onClick={() => router.push("/payment/1")} className="w-full py-3 bg-slate-50 dark:bg-slate-800 text-[#5b4fff] font-bold rounded-xl group-hover:bg-[#5b4fff] group-hover:text-white transition-colors flex justify-center items-center gap-2">
+                    Enroll Course <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -242,10 +242,10 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="bg-white/10 backdrop-blur-md rounded-[2rem] p-8 border border-white/20">
-                 <img src="/africa.jpg" alt="Tutor Session" className="rounded-xl w-full h-auto shadow-2xl" />
+                <img src="/africa.jpg" alt="Tutor Session" className="rounded-xl w-full h-auto shadow-2xl" />
               </div>
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#34d399]/20 rounded-full blur-3xl animate-pulse" />
             </div>
@@ -259,10 +259,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white mb-6">How It Works</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-5 gap-8 relative items-start">
             <div className="hidden md:block absolute top-10 left-[10%] right-[10%] h-0.5 bg-border -z-10" />
-            
+
             {[
               { title: "Choose a Course", text: "Browse our catalog and select the skill that aligns with your career goals.", icon: BookOpen },
               { title: "Register Interest", text: "Fill out a simple form to let us know you’re ready to start.", icon: Share2 },
@@ -290,21 +290,21 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">What Our Students Say</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-8">
             {[
-              { 
-                text: "I tried learning UI/UX on my own for months but felt stuck. At Koyitech, having a tutor to point out my mistakes in real-time changed everything. I landed my first freelance gig before the course even ended!", 
-                name: "Chidi A.", location: "Lagos", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=150&q=80" 
+              {
+                text: "I tried learning UI/UX on my own for months but felt stuck. At Koyitech, having a tutor to point out my mistakes in real-time changed everything. I landed my first freelance gig before the course even ended!",
+                name: "Chidi A.", location: "Lagos", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=150&q=80"
               },
-              { 
-                text: "The Data Analysis course was intense but so rewarding. The mentorship didn't just teach me tools; it taught me how to think like an analyst. Highly recommended for anyone serious about tech.", 
+              {
+                text: "The Data Analysis course was intense but so rewarding. The mentorship didn't just teach me tools; it taught me how to think like an analyst. Highly recommended for anyone serious about tech.",
                 name: "Sarah O.", location: "Abuja", avatar: "/profile.jpg"
               },
             ].map((testi, i) => (
               <div key={i} className="bg-white dark:bg-slate-900 p-10 rounded-3xl border border-border shadow-xl">
                 <div className="flex gap-1 mb-6">
-                   {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-yellow-400 text-yellow-400" />)}
+                  {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-5 h-5 fill-yellow-400 text-yellow-400" />)}
                 </div>
                 <p className="text-lg text-[#1a064f] dark:text-white mb-8 italic">"{testi.text}"</p>
                 <div className="flex items-center gap-4">
@@ -329,7 +329,7 @@ export default function Landing() {
             The digital economy waits for no one. Whether you are looking to switch careers or start your first professional journey, the best time to start is now. Join a community of achievers and get the guidance you deserve.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
+            <button
               onClick={() => router.push("/signup")}
               className="px-10 py-4 bg-white text-[#181059] font-bold rounded-xl shadow-xl hover:scale-105 transition-all text-lg"
             >
@@ -349,28 +349,28 @@ export default function Landing() {
             <div className="space-y-6">
               <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">About Us</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Koyitech Africa is a leading digital skills provider in Nigeria dedicated to closing the skills gap in the global tech ecosystem. We specialize in human-centered learning, moving away from the "watch-only" model of online education to a more rigorous, tutor-supported framework.
+                Koyitech Africa is a leading digital skills provider, dedicated to closing the skills gap in the global tech ecosystem. We specialize in human-centered learning, moving away from the "watch-only" model of online education to a more rigorous, tutor-supported framework.
               </p>
             </div>
-            
+
             <div className="bg-slate-50 dark:bg-slate-900 border border-border p-10 rounded-3xl space-y-8">
               <div>
-                 <h4 className="font-bold text-xl text-[#5b4fff] mb-2 flex items-center gap-2"><Target className="w-5 h-5"/> Mission</h4>
-                 <p className="text-muted-foreground">To empower 100,000 Africans with job-ready digital skills through personalized, expert-led mentorship.</p>
+                <h4 className="font-bold text-xl text-[#5b4fff] mb-2 flex items-center gap-2"><Target className="w-5 h-5" /> Mission</h4>
+                <p className="text-muted-foreground">To empower 100,000 Africans with job-ready digital skills through personalized, expert-led mentorship.</p>
               </div>
               <div className="w-full h-px bg-border"></div>
               <div>
-                 <h4 className="font-bold text-xl text-[#34d399] mb-2 flex items-center gap-2"><Globe className="w-5 h-5"/> Vision</h4>
-                 <p className="text-muted-foreground">To be the primary bridge between raw talent and professional excellence in the African digital landscape.</p>
+                <h4 className="font-bold text-xl text-[#34d399] mb-2 flex items-center gap-2"><Globe className="w-5 h-5" /> Vision</h4>
+                <p className="text-muted-foreground">To be the primary bridge between raw talent and professional excellence in the African digital landscape.</p>
               </div>
               <div className="w-full h-px bg-border"></div>
               <div>
-                 <h4 className="font-bold text-xl text-[#1a064f] dark:text-white mb-2 flex items-center gap-2"><Shield className="w-5 h-5"/> Our Approach</h4>
-                 <ul className="text-muted-foreground space-y-2 list-none">
-                    <li><strong className="text-[#5b4fff]">Guided:</strong> Tutors lead every step.</li>
-                    <li><strong className="text-[#5b4fff]">Practical:</strong> Projects over theory.</li>
-                    <li><strong className="text-[#5b4fff]">Inclusive:</strong> Affordable and accessible learning for all.</li>
-                 </ul>
+                <h4 className="font-bold text-xl text-[#1a064f] dark:text-white mb-2 flex items-center gap-2"><Shield className="w-5 h-5" /> Our Approach</h4>
+                <ul className="text-muted-foreground space-y-2 list-none">
+                  <li><strong className="text-[#5b4fff]">Guided:</strong> Tutors lead every step.</li>
+                  <li><strong className="text-[#5b4fff]">Practical:</strong> Projects over theory.</li>
+                  <li><strong className="text-[#5b4fff]">Inclusive:</strong> Affordable and accessible learning for all.</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -404,15 +404,15 @@ export default function Landing() {
 
       {/* 9. Get In Touch */}
       <section id="contact" className="py-24 bg-background">
-         <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">Get In Touch</h2>
-            <p className="text-xl text-muted-foreground">
-              Have a question about which course is right for you? Or perhaps you want to learn more about our corporate training? Our team is friendly and ready to help you navigate your next career move. Reach out to us today!
-            </p>
-            <button className="px-8 py-4 bg-[#1a064f] dark:bg-white dark:text-[#1a064f] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all text-lg inline-flex items-center gap-3">
-               <MessageSquare className="w-5 h-5" /> Let's Chat
-            </button>
-         </div>
+        <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-[#1a064f] dark:text-white">Get In Touch</h2>
+          <p className="text-xl text-muted-foreground">
+            Have a question about which course is right for you? Or perhaps you want to learn more about our corporate training? Our team is friendly and ready to help you navigate your next career move. Reach out to us today!
+          </p>
+          <button className="px-8 py-4 bg-[#1a064f] dark:bg-white dark:text-[#1a064f] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all text-lg inline-flex items-center gap-3">
+            <MessageSquare className="w-5 h-5" /> Let's Chat
+          </button>
+        </div>
       </section>
 
       {/* 10. Footer */}
@@ -420,31 +420,31 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-12 border-b border-white/10 pb-12 mb-8">
             <div className="space-y-4">
-               <div className="flex items-center gap-3 text-2xl font-black tracking-tighter">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white italic">AA</div>
-                  Koyitech Africa
-               </div>
-               <p className="text-white/60 text-sm max-w-xs font-medium">
-                 Guided Learning. Practical Skills. Real Results.
-               </p>
+              <div className="flex items-center gap-3 text-2xl font-black tracking-tighter">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white italic">AA</div>
+                Koyitech Africa
+              </div>
+              <p className="text-white/60 text-sm max-w-xs font-medium">
+                Guided Learning. Practical Skills. Real Results.
+              </p>
             </div>
-            
+
             <div className="flex flex-col items-center md:items-end gap-6">
-               <button 
-                 onClick={() => router.push("/signup")}
-                 className="px-8 py-3 bg-[#5b4fff] text-white rounded-lg font-bold hover:bg-[#4a3ecc] transition-colors shadow-lg"
-               >
-                 Join Koyitech Africa and secure your future.
-               </button>
+              <button
+                onClick={() => router.push("/signup")}
+                className="px-8 py-3 bg-[#5b4fff] text-white rounded-lg font-bold hover:bg-[#4a3ecc] transition-colors shadow-lg"
+              >
+                Join Koyitech Africa and secure your future.
+              </button>
             </div>
           </div>
-          
+
           <div className="flex justify-between items-center text-sm text-white/50 font-medium">
-             <p>© 2026 Koyitech Africa. All rights reserved.</p>
-             <div className="hidden sm:flex items-center gap-6">
-                <span>Terms of Service</span>
-                <span>Privacy Policy</span>
-             </div>
+            <p>© 2026 Koyitech Africa. All rights reserved.</p>
+            <div className="hidden sm:flex items-center gap-6">
+              <span>Terms of Service</span>
+              <span>Privacy Policy</span>
+            </div>
           </div>
         </div>
       </footer>
