@@ -5,6 +5,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { User, Mail, Phone, Edit3, Settings, Shield, Save, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { supabase } from "../../../lib/supabase";
 
 export default function Profile() {
   const [user, setUser] = useState<any>(null);
@@ -15,6 +16,11 @@ export default function Profile() {
     email: "",
     phone: ""
   });
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [factorId, setFactorId] = useState("");
+  const [showMfaSetup, setShowMfaSetup] = useState(false);
+  const [mfaError, setMfaError] = useState("");
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
@@ -26,6 +32,16 @@ export default function Profile() {
         lastName: parsed.lastName || "",
         email: parsed.email || "",
         phone: parsed.phone || ""
+      });
+
+      // Fetch Supabase MFA status
+      supabase.auth.mfa.listFactors().then(({ data }) => {
+        if (data && data.totp && data.totp.length > 0) {
+          const verifiedFactor = data.totp.find(f => f.status === 'verified');
+          if (verifiedFactor) {
+             setUser((prev: any) => prev ? { ...prev, is2FAEnabled: true, factorId: verifiedFactor.id } : prev);
+          }
+        }
       });
     } else {
       // Fallback mock user if accessed directly
@@ -62,6 +78,75 @@ export default function Profile() {
     toast.success("Profile updated successfully!");
   };
 
+  const handleEnable2FA = async () => {
+    // Unenroll any existing unverified factors first to prevent the "already exists" error
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    if (factors && factors.totp) {
+      for (const factor of factors.totp) {
+        if (factor.status === 'unverified') {
+          await supabase.auth.mfa.unenroll({ factorId: factor.id });
+        }
+      }
+    }
+
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+      friendlyName: 'koyitech-africa authenticator'
+    });
+    
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    
+    setFactorId(data.id);
+    setQrCodeUrl(data.totp.qr_code);
+    setShowMfaSetup(true);
+  };
+
+  const handleVerify2FA = async () => {
+    setMfaError("");
+    const challenge = await supabase.auth.mfa.challenge({ factorId });
+    if (challenge.error) {
+      setMfaError(challenge.error.message);
+      return;
+    }
+    
+    const verify = await supabase.auth.mfa.verify({
+      factorId,
+      challengeId: challenge.data.id,
+      code: verifyCode
+    });
+    
+    if (verify.error) {
+      setMfaError(verify.error.message);
+      return;
+    }
+    
+    toast.success("2FA enabled successfully!");
+    setShowMfaSetup(false);
+    setVerifyCode("");
+    
+    const updatedUser = { ...user, is2FAEnabled: true, factorId };
+    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
+  const handleDisable2FA = async () => {
+    if (user.factorId) {
+      const { error } = await supabase.auth.mfa.unenroll({ factorId: user.factorId });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+    }
+    
+    const updatedUser = { ...user, is2FAEnabled: false, factorId: null };
+    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    toast.success("2FA disabled successfully!");
+  };
+
   if (!user) {
     return (
       <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
@@ -96,13 +181,13 @@ export default function Profile() {
           >
             <div className="absolute top-0 left-0 w-full h-24 md:h-32 bg-[linear-gradient(45deg,#181059,#5b4fff)]" />
             
-            <div className="relative pt-12 md:pt-16 flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-end mb-6 md:mb-8">
-               <div className="flex-1 mt-6 md:mt-0">
-                  <h2 className="text-2xl md:text-3xl font-black text-foreground mb-1">{user.firstName} {user.lastName}</h2>
-                  <p className="text-xs md:text-sm font-bold text-muted-foreground">ID: #{user.id?.slice(-6) || "000000"}</p>
-                  <div className="mt-4 inline-flex items-center gap-2 bg-secondary/10 px-4 py-2 rounded-full">
-                     <Shield size={16} className="text-secondary" />
-                     <span className="text-xs font-black uppercase tracking-widest text-secondary">Premium Member</span>
+            <div className="relative pt-12 md:pt-16 flex flex-col items-center gap-6 md:gap-8 mb-6 md:mb-8">
+               <div className="flex-1 mt-6 md:mt-0 flex flex-col items-center">
+                  <h2 className="text-2xl md:text-3xl font-black text-white mb-1 text-center">{user.firstName} {user.lastName}</h2>
+                  <p className="text-xs md:text-sm font-bold text-white/80 text-center">ID: #{user.id?.slice(-6) || "000000"}</p>
+                  <div className="mt-4 inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                     <Shield size={16} className="text-white" />
+                     <span className="text-xs font-black uppercase tracking-widest text-white">Premium Member</span>
                   </div>
                </div>
                {!isEditing ? (
@@ -221,8 +306,52 @@ export default function Profile() {
                      <div className="w-full h-px bg-border"></div>
                      <div>
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Two-Factor Authentication</p>
-                        <p className="text-lg font-medium text-muted-foreground">Not enabled</p>
-                        <button className="text-sm text-[#5b4fff] font-bold hover:underline mt-2">Enable 2FA</button>
+                        <div className="flex items-center justify-between mt-2">
+                          <p className={`text-lg font-medium ${user.is2FAEnabled ? "text-emerald-500" : "text-muted-foreground"}`}>
+                            {user.is2FAEnabled ? "Enabled" : "Not enabled"}
+                          </p>
+                          <button
+                            onClick={user.is2FAEnabled ? handleDisable2FA : handleEnable2FA}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b4fff] focus:ring-offset-2 ${user.is2FAEnabled ? 'bg-[#5b4fff]' : 'bg-slate-300 dark:bg-slate-700'}`}
+                          >
+                            <span className="sr-only">Toggle 2FA</span>
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${user.is2FAEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                            />
+                          </button>
+                        </div>
+
+                        {showMfaSetup && (
+                          <div className="mt-4 p-4 border border-border rounded-xl bg-background shadow-sm max-w-sm">
+                             <p className="text-sm font-bold mb-2">Scan QR Code</p>
+                             <div className="bg-white p-2 inline-block rounded-lg mb-4" dangerouslySetInnerHTML={{ __html: qrCodeUrl }} />
+                             
+                             <p className="text-sm font-bold mb-2">Enter Verification Code</p>
+                             <input 
+                               type="text" 
+                               value={verifyCode}
+                               onChange={(e) => setVerifyCode(e.target.value)}
+                               placeholder="000000"
+                               className="w-full px-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-[#5b4fff] outline-none mb-2 text-center tracking-widest font-mono"
+                               maxLength={6}
+                             />
+                             {mfaError && <p className="text-xs text-red-500 mb-2">{mfaError}</p>}
+                             <div className="flex gap-2">
+                               <button 
+                                 onClick={() => setShowMfaSetup(false)}
+                                 className="flex-1 py-2 border border-border rounded-lg text-xs font-bold"
+                               >
+                                 Cancel
+                               </button>
+                               <button 
+                                 onClick={handleVerify2FA}
+                                 className="flex-1 py-2 bg-[#5b4fff] text-white rounded-lg text-xs font-bold"
+                               >
+                                 Verify
+                               </button>
+                             </div>
+                          </div>
+                        )}
                      </div>
                   </div>
                </div>
