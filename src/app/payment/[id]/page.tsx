@@ -16,15 +16,42 @@ export default function Payment() {
    const [success, setSuccess] = useState(false);
    const [email, setEmail] = useState("");
    const [mounted, setMounted] = useState(false);
+   const [course, setCourse] = useState<any>(null);
 
    useEffect(() => {
+      const baseCourses = [
+        { id: "1", title: "Geography Sensing & GIS", price: "₦50,000" },
+        { id: "2", title: "Social Media Management", price: "₦50,000" },
+        { id: "3", title: "Digital Marketing", price: "₦50,000" },
+        { id: "4", title: "Graphics Design", price: "₦50,000" },
+        { id: "5", title: "UI/UX Design", price: "₦50,000" },
+        { id: "6", title: "Data Analysis", price: "₦50,000" },
+        { id: "7", title: "Virtual Assistant / Remote Work", price: "₦50,000" },
+        { id: "8", title: "Cybersecurity", price: "₦50,000" },
+        { id: "9", title: "AI Productivity", price: "₦50,000" },
+        { id: "10", title: "Project Management", price: "₦50,000" },
+        { id: "11", title: "Web Development", price: "₦50,000" }
+      ];
+
+      const customCourses = JSON.parse(localStorage.getItem("createdCourses") || "[]");
+      const all = [...customCourses, ...baseCourses];
+      const found = all.find(c => String(c.id) === String(courseId));
+      
+      if (found) {
+         setCourse(found);
+      } else {
+         setCourse({ title: "UI/UX Design Masterclass", price: "₦150,000" });
+      }
+
       setMounted(true);
-   }, []);
+   }, [courseId]);
+
+   const amountInKobo = course ? (parseInt(course.price.replace(/\D/g, "")) || 150000) * 100 : 150000 * 100;
 
    const config = {
       reference: (new Date()).getTime().toString(),
       email: email,
-      amount: 150000 * 100, // Example: 150,000 NGN in kobo
+      amount: amountInKobo,
       publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
    };
 
@@ -117,7 +144,7 @@ export default function Payment() {
                            </div>
                            <div>
                               <p className="text-xs font-black uppercase tracking-widest opacity-60">Enrolling In</p>
-                              <p className="text-lg font-bold">UI/UX Design Masterclass</p>
+                              <p className="text-lg font-bold">{course?.title || "UI/UX Design Masterclass"}</p>
                            </div>
                         </div>
 
@@ -132,7 +159,7 @@ export default function Payment() {
                            </div>
                            <div className="flex justify-between text-xl pt-4 border-t border-white/10">
                               <span className="font-black">Price</span>
-                              <span className="font-black text-white italic">₦150,000</span>
+                              <span className="font-black text-white italic">{course?.price || "₦150,000"}</span>
                            </div>
                         </div>
                      </div>
