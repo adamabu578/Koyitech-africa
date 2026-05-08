@@ -409,7 +409,7 @@ export default function Landing() {
           <p className="text-xl text-muted-foreground">
             Have a question about which course is right for you? Or perhaps you want to learn more about our corporate training? Our team is friendly and ready to help you navigate your next career move. Reach out to us today!
           </p>
-          <button onClick={() => window.open("https://wa.me/", "_blank")} className="px-8 py-4 bg-[#25D366] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all text-lg inline-flex items-center gap-3">
+          <button onClick={() => window.open("https://wa.me/+2347036352800", "_blank")} className="px-8 py-4 bg-[#25D366] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all text-lg inline-flex items-center gap-3">
             <MessageSquare className="w-5 h-5" /> Let's Chat
           </button>
         </div>

@@ -52,7 +52,7 @@ export function Sidebar({ userType }: SidebarProps) {
   ];
 
   const adminLinks = [
-    { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/", label: "Dashboard", icon: LayoutDashboard },
     { path: "/admin/courses", label: "Courses", icon: BookOpen },
     { path: "/admin/tutors", label: "Tutors", icon: GraduationCap },
     { path: "/admin/students", label: "Students", icon: Users },
@@ -119,8 +119,8 @@ export function Sidebar({ userType }: SidebarProps) {
                 href={link.path}
                 onClick={() => setIsMobileOpen(false)}
                 className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-sm uppercase tracking-widest ${isActive
-                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
               >
                 <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground"}`} strokeWidth={isActive ? 2.5 : 2} />

@@ -30,6 +30,17 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <nav className={`fixed top-0 w-full z-[100] transition-colors duration-300 ${scrolled ? 'bg-[#181059] dark:bg-slate-950 shadow-lg' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -41,7 +52,7 @@ export function Navbar() {
               className="text-2xl font-black font-outfit cursor-pointer flex items-center gap-3 tracking-tighter text-white dark:text-[#34d399]"
               whileHover={{ scale: 1.02 }}
             >
-              <span className="hidden sm:block uppercase tracking-tight">Koyitech Africa</span>
+              <span className="uppercase tracking-tight">Koyitech Africa</span>
             </motion.div>
           </Link>
         </div>
@@ -119,7 +130,7 @@ export function Navbar() {
               className="p-4 bg-white text-[#181059] font-bold font-outfit tracking-tight rounded-xl text-center"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Enrol Now/Register
+              Register
             </Link>
           </motion.div>
         )}
