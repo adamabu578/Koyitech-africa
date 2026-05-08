@@ -3,34 +3,33 @@
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { HelpCircle, Clock, Award, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../../lib/supabase";
 
 export default function Quizzes() {
-  const quizzes = [
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Module 2: Color Theory & Typography",
-      questions: 15,
-      duration: "20 mins",
-      status: "Available",
-      score: null
-    },
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Module 1: Design Principles",
-      questions: 10,
-      duration: "15 mins",
-      status: "Completed",
-      score: "90%"
-    },
-    {
-      course: "Data Analysis Essentials",
-      title: "Statistics Fundamentals",
-      questions: 20,
-      duration: "30 mins",
-      status: "Available",
-      score: null
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+  const fetchQuizzes = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      setQuizzes(data || []);
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
@@ -47,55 +46,68 @@ export default function Quizzes() {
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
           <div className="grid md:grid-cols-2 gap-4 md:gap-8">
-            {quizzes.map((quiz, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="p-5 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-[2.5rem] flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-primary transition-all group"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <span className={`text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full ${quiz.status === 'Completed' ? 'bg-secondary/20 text-secondary' : 'bg-primary/10 text-primary'}`}>
-                      {quiz.status}
-                    </span>
-                    <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-primary">
-                       {quiz.status === 'Completed' ? <Star size={20} className="text-secondary" /> : <HelpCircle size={20} />}
+            {isLoading ? (
+               <div className="col-span-1 md:col-span-2 text-center py-10">
+                 <p className="text-muted-foreground">Loading quizzes...</p>
+               </div>
+            ) : quizzes.length === 0 ? (
+               <div className="col-span-1 md:col-span-2 text-center py-10 bg-background border border-border rounded-2xl md:rounded-[2.5rem]">
+                 <p className="text-muted-foreground">No quizzes available right now.</p>
+               </div>
+            ) : (
+              quizzes.map((quiz, index) => {
+                const status = quiz.status || "Available";
+                const score = quiz.score || null;
+                return (
+                <motion.div 
+                  key={quiz.id || index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-5 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-[2.5rem] flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-primary transition-all group"
+                >
+                  <div>
+                    <div className="flex justify-between items-start mb-6">
+                      <span className={`text-[10px] font-black tracking-[0.2em] uppercase px-3 py-1 rounded-full ${status === 'Completed' ? 'bg-secondary/20 text-secondary' : 'bg-primary/10 text-primary'}`}>
+                        {status}
+                      </span>
+                      <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-primary">
+                         {status === 'Completed' ? <Star size={20} className="text-secondary" /> : <HelpCircle size={20} />}
+                      </div>
                     </div>
+                    <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 text-foreground">{quiz.title}</h3>
+                    <p className="text-sm md:text-base font-bold text-muted-foreground mb-6 md:mb-8">{quiz.course}</p>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 text-foreground">{quiz.title}</h3>
-                  <p className="text-sm md:text-base font-bold text-muted-foreground mb-6 md:mb-8">{quiz.course}</p>
-                </div>
-                
-                <div className="space-y-6">
-                   <div className="flex items-center justify-between p-4 bg-muted rounded-2xl">
-                      <div className="text-center flex-1 border-r border-border">
-                         <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Questions</p>
-                         <p className="text-sm md:text-lg font-bold text-foreground">{quiz.questions}</p>
-                      </div>
-                      <div className="text-center flex-1 border-r border-border">
-                         <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Duration</p>
-                         <p className="text-sm md:text-lg font-bold text-foreground flex items-center justify-center gap-1"><Clock size={14}/> {quiz.duration}</p>
-                      </div>
-                      <div className="text-center flex-1">
-                         <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Score</p>
-                         <p className={`text-sm md:text-lg font-black ${quiz.score ? 'text-secondary' : 'text-foreground'}`}>{quiz.score || "-"}</p>
-                      </div>
-                   </div>
+                  
+                  <div className="space-y-6">
+                     <div className="flex items-center justify-between p-4 bg-muted rounded-2xl">
+                        <div className="text-center flex-1 border-r border-border">
+                           <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Questions</p>
+                           <p className="text-sm md:text-lg font-bold text-foreground">{quiz.questions || 1}</p>
+                        </div>
+                        <div className="text-center flex-1 border-r border-border">
+                           <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Duration</p>
+                           <p className="text-sm md:text-lg font-bold text-foreground flex items-center justify-center gap-1"><Clock size={14}/> {quiz.duration || "10 mins"}</p>
+                        </div>
+                        <div className="text-center flex-1">
+                           <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-1">Score</p>
+                           <p className={`text-sm md:text-lg font-black ${score ? 'text-secondary' : 'text-foreground'}`}>{score || "-"}</p>
+                        </div>
+                     </div>
 
-                   {quiz.status === 'Available' ? (
-                      <button className="w-full py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
-                        Start Quiz
-                      </button>
-                   ) : (
-                      <button className="w-full py-3 md:py-4 bg-muted text-foreground rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-border transition-all">
-                        Review Answers
-                      </button>
-                   )}
-                </div>
-              </motion.div>
-            ))}
+                     {status === 'Available' ? (
+                        <button className="w-full py-3 md:py-4 bg-primary text-white rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
+                          Start Quiz
+                        </button>
+                     ) : (
+                        <button className="w-full py-3 md:py-4 bg-muted text-foreground rounded-lg md:rounded-xl font-black text-xs md:text-sm tracking-widest uppercase hover:bg-border transition-all">
+                          Review Answers
+                        </button>
+                     )}
+                  </div>
+                </motion.div>
+              )})
+            )}
           </div>
         </div>
       </main>

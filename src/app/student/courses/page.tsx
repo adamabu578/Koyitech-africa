@@ -4,30 +4,23 @@ import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { BookOpen, Clock, ChevronRight, PlayCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { supabase } from "../../../lib/supabase";
 
 export default function MyCourses() {
   const router = useRouter();
 
-  const courses = [
-    {
-      id: "5",
-      title: "UI/UX Design",
-      tutor: "Jane Doe",
-      progress: 75,
-      totalModules: 12,
-      completedModules: 9,
-      status: "In Progress"
-    },
-    {
-      id: "6",
-      title: "Data Analysis",
-      tutor: "John Smith",
-      progress: 30,
-      totalModules: 10,
-      completedModules: 3,
-      status: "In Progress"
-    }
-  ];
+  const [courses, setCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const { data } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
+      if (data) {
+        setCourses(data);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#fdf8f5] dark:bg-slate-950 md:p-6 lg:p-8 transition-colors duration-300">
@@ -44,7 +37,7 @@ export default function MyCourses() {
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-10">
           <div className="grid md:grid-cols-2 gap-4 md:gap-8">
-            {courses.map((course, index) => (
+            {courses.length > 0 ? courses.map((course, index) => (
               <motion.div 
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -58,34 +51,34 @@ export default function MyCourses() {
                     <BookOpen className="w-6 h-6 md:w-8 md:h-8" />
                   </div>
                   <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] uppercase font-black tracking-widest">
-                    {course.status}
+                    {course.status || "Active"}
                   </span>
                 </div>
                 
                 <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight group-hover:text-primary transition-colors">{course.title}</h3>
-                <p className="text-sm md:text-base text-muted-foreground font-medium mb-6 md:mb-8">Tutor: {course.tutor}</p>
+                <p className="text-sm md:text-base text-muted-foreground font-medium mb-6 md:mb-8">Tutor: Instructor</p>
                 
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm font-bold">
                     <span>Course Progress</span>
-                    <span className="text-primary">{course.progress}%</span>
+                    <span className="text-primary">0%</span>
                   </div>
                   <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-primary rounded-full transition-all duration-1000"
-                      style={{ width: `${course.progress}%` }}
+                      style={{ width: `0%` }}
                     />
                   </div>
                   <div className="flex items-center justify-between pt-4">
                     <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
                        <PlayCircle size={14} className="text-secondary" />
-                       <span>{course.completedModules} / {course.totalModules} Modules</span>
+                       <span>0 / {course.duration || 'N/A'} Modules</span>
                     </div>
                     <ChevronRight size={20} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No courses found.</p>}
           </div>
         </div>
       </main>

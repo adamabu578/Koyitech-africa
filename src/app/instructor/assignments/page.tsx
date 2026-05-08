@@ -19,10 +19,7 @@ export default function InstructorAssignments() {
   const [deadline, setDeadline] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
-  const defaultAssignments = [
-    { id: 1, title: "Landing Page Wireframe", course: "UI/UX Design Masterclass", deadline: "Oct 28, 2026", submissions: 32, instruction: "Design a wireframe for a real estate landing page..." },
-    { id: 2, title: "Visual Style Guide", course: "Visual Communication Basics", deadline: "Nov 05, 2026", submissions: 15, instruction: "Create a comprehensive style guide..." },
-  ];
+
 
   const fetchAssignments = async () => {
     const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
@@ -36,9 +33,9 @@ export default function InstructorAssignments() {
         status: item.status,
         instruction: item.instruction
       }));
-      setAssignments([...mapped, ...defaultAssignments]);
+      setAssignments(mapped);
     } else {
-      setAssignments(defaultAssignments);
+      setAssignments([]);
     }
   };
 
@@ -208,7 +205,7 @@ export default function InstructorAssignments() {
             {/* Assignments List Tab */}
             {activeTab === "assignments" && (
               <div className="space-y-6">
-                {assignments.map((assignment, i) => (
+                {assignments.length > 0 ? assignments.map((assignment, i) => (
                   <div key={i} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group hover:border-primary transition-all">
                     <div className="flex items-start sm:items-center gap-4 md:gap-6 w-full sm:w-auto">
                       <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -228,7 +225,7 @@ export default function InstructorAssignments() {
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t border-border sm:border-0">
                       <div className="text-left sm:text-right">
-                        <p className="text-xl md:text-2xl font-black">{assignment.submissions}</p>
+                        <p className="text-xl md:text-2xl font-black">{assignment.submissions || 0}</p>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Submissions</p>
                       </div>
                       <div className="flex gap-2">
@@ -249,7 +246,7 @@ export default function InstructorAssignments() {
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : <p className="text-sm text-muted-foreground">No assignments found.</p>}
               </div>
             )}
 

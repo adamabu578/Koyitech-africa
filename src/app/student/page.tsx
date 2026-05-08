@@ -12,17 +12,38 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { supabase } from "../../lib/supabase";
 
 import { toast } from "sonner";
 
 export default function StudentDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [tutors, setTutors] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
       setUser(JSON.parse(currentUser));
+      const fetchData = async () => {
+        const [{ data: cData }, { data: aData }, { data: clData }, { data: tData }, { data: sData }] = await Promise.all([
+          supabase.from('courses').select('*'),
+          supabase.from('assignments').select('*').eq('status', 'Pending'),
+          supabase.from('classes').select('*').order('created_at', { ascending: false }).limit(5),
+          supabase.from('profiles').select('*').eq('role', 'instructor').limit(5),
+          supabase.from('profiles').select('*').eq('role', 'student').limit(5)
+        ]);
+        if (cData) setCourses(cData);
+        if (aData) setAssignments(aData);
+        if (clData) setClasses(clData);
+        if (tData) setTutors(tData);
+        if (sData) setStudents(sData);
+      };
+      fetchData();
     } else {
       router.push("/login");
     }
@@ -31,9 +52,9 @@ export default function StudentDashboard() {
   if (!user) return null;
 
   const stats = [
-    { label: "Enrolled Courses", value: "3", icon: BookOpen, color: "bg-[#fca566]", subtitle: "Courses" },
-    { label: "Pending Assignments", value: "5", icon: Clock, color: "bg-[#4ade80]", subtitle: "Tasks" },
-    { label: "Completed Courses", value: "1", icon: CheckCircle2, color: "bg-[#60a5fa]", subtitle: "Finished" },
+    { label: "Enrolled Courses", value: courses.length.toString(), icon: BookOpen, color: "bg-[#fca566]", subtitle: "Courses" },
+    { label: "Pending Assignments", value: assignments.length.toString(), icon: Clock, color: "bg-[#4ade80]", subtitle: "Tasks" },
+    { label: "Completed Courses", value: "0", icon: CheckCircle2, color: "bg-[#60a5fa]", subtitle: "Finished" },
   ];
 
   const quickActions = [
@@ -127,25 +148,22 @@ export default function StudentDashboard() {
                       <h3 className="font-bold text-slate-800 dark:text-slate-100">Your Level</h3>
                     </div>
                     <div className="space-y-6">
-                      {[
-                        { title: "UI/UX Design", progress: 78, color: "bg-[#4ade80]" },
-                        { title: "Data Analysis", progress: 30, color: "bg-[#fca566]" },
-                      ].map((course, i) => (
+                      {courses.length > 0 ? courses.slice(0, 3).map((course, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-sm mb-2">
                             <span className="font-medium text-slate-700 dark:text-slate-300">{course.title}</span>
-                            <span className="font-bold text-slate-800 dark:text-slate-100">{course.progress}%</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-100">0%</span>
                           </div>
                           <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${course.progress}%` }}
+                              animate={{ width: `0%` }}
                               transition={{ duration: 1, delay: 0.2 }}
-                              className={`h-full ${course.color} rounded-full`}
+                              className={`h-full ${i % 2 === 0 ? 'bg-[#4ade80]' : 'bg-[#fca566]'} rounded-full`}
                             />
                           </div>
                         </div>
-                      ))}
+                      )) : <p className="text-sm text-slate-500">No active courses found.</p>}
                     </div>
                   </section>
 
@@ -200,17 +218,12 @@ export default function StudentDashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            { rank: 1, name: "Jerome Bell", course: "UI/UX Design", score: "5520 points", active: true, img: "J" },
-                            { rank: 2, name: "Courtney Henry", course: "Data Analysis", score: "5140 points", active: false, img: "C" },
-                            { rank: 3, name: "Arlene McCoy", course: "Web Development", score: "4780 points", active: false, img: "A" },
-                            { rank: 4, name: "Darrell Steward", course: "AI Productivity", score: "4520 points", active: false, img: "D" },
-                          ].map((row, i) => (
-                            <tr key={i} className={`border-b last:border-0 border-slate-50 dark:border-slate-800/50 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/50 ${row.active ? 'bg-orange-50/30 dark:bg-orange-500/10' : ''}`}>
+                          {students.length > 0 ? students.map((row, i) => (
+                            <tr key={i} className={`border-b last:border-0 border-slate-50 dark:border-slate-800/50 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/50 ${i === 0 ? 'bg-orange-50/30 dark:bg-orange-500/10' : ''}`}>
                               <td className="py-4 px-6">
                                 <div className="flex items-center gap-3">
-                                  <span className={`font-bold ${row.active ? 'text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400'}`}>{row.rank}</span>
-                                  {row.active ? (
+                                  <span className={`font-bold ${i === 0 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400'}`}>{i + 1}</span>
+                                  {i === 0 ? (
                                     <span className="text-orange-400 text-xs">▲</span>
                                   ) : (
                                     <span className="text-red-400 text-xs">▼</span>
@@ -220,15 +233,19 @@ export default function StudentDashboard() {
                               <td className="py-4 px-6">
                                 <div className="flex items-center gap-3">
                                   <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs">
-                                    {row.img}
+                                    {(row.first_name?.[0] || '') + (row.last_name?.[0] || '')}
                                   </div>
-                                  <span className="font-bold text-slate-800 dark:text-slate-100">{row.name}</span>
+                                  <span className="font-bold text-slate-800 dark:text-slate-100">{row.first_name} {row.last_name}</span>
                                 </div>
                               </td>
-                              <td className="py-4 px-6 text-slate-600 dark:text-slate-400 font-medium">{row.course}</td>
-                              <td className="py-4 px-6 text-right font-bold text-slate-800 dark:text-slate-100">{row.score}</td>
+                              <td className="py-4 px-6 text-slate-600 dark:text-slate-400 font-medium">Student</td>
+                              <td className="py-4 px-6 text-right font-bold text-slate-800 dark:text-slate-100">0 points</td>
                             </tr>
-                          ))}
+                          )) : (
+                            <tr>
+                              <td colSpan={4} className="py-4 px-6 text-center text-sm text-slate-500">No students found</td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -250,23 +267,19 @@ export default function StudentDashboard() {
                   </div>
 
                   <div className="space-y-4">
-                    {[
-                      { title: "UI Design Principles", date: "August 9, 2024", time: "10:00 AM", icon: Play, color: "text-orange-500" },
-                      { title: "Data Visualization", date: "August 11, 2024", time: "02:00 PM", icon: Target, color: "text-emerald-500" },
-                      { title: "Review Session", date: "August 13, 2024", time: "11:00 AM", icon: BookOpen, color: "text-blue-500" },
-                    ].map((session, i) => (
+                    {classes.length > 0 ? classes.map((session, i) => (
                       <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-md transition-all cursor-pointer group">
-                        <div className={`w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center ${session.color} group-hover:bg-slate-100 dark:group-hover:bg-slate-700 transition-colors`}>
-                          <session.icon className="w-6 h-6" />
+                        <div className={`w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center ${i % 2 === 0 ? 'text-orange-500' : 'text-emerald-500'} group-hover:bg-slate-100 dark:group-hover:bg-slate-700 transition-colors`}>
+                          <Play className="w-6 h-6" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-orange-500 transition-colors">{session.title}</h4>
+                          <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-orange-500 transition-colors">{session.topic}</h4>
                           <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-1">
-                            <Calendar className="w-3.5 h-3.5" /> {session.date}
+                            <Calendar className="w-3.5 h-3.5" /> {session.date} • {session.time}
                           </p>
                         </div>
                       </div>
-                    ))}
+                    )) : <p className="text-sm text-slate-500">No scheduled classes.</p>}
                   </div>
                 </section>
 
@@ -281,27 +294,22 @@ export default function StudentDashboard() {
 
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)] p-6 transition-colors">
                     <div className="space-y-6">
-                      {[
-                        { name: "Jacob Jones", role: "UI/UX Tutor", img: "J" },
-                        { name: "Samuel Ethan", role: "Data Tutor", img: "S" },
-                        { name: "Eleanor Pena", role: "Web Dev Tutor", img: "E" },
-                        { name: "Annette Black", role: "Python Tutor", img: "A" },
-                      ].map((friend, i) => (
+                      {tutors.length > 0 ? tutors.map((friend, i) => (
                         <div key={i} className="flex items-center justify-between group cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold flex items-center justify-center group-hover:bg-orange-100 dark:group-hover:bg-orange-900/50 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                              {friend.img}
+                              {(friend.first_name?.[0] || '') + (friend.last_name?.[0] || '')}
                             </div>
                             <div>
-                              <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-orange-500 transition-colors">{friend.name}</h4>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{friend.role}</p>
+                              <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-orange-500 transition-colors">{friend.first_name} {friend.last_name}</h4>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tutor</p>
                             </div>
                           </div>
                           <button className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/30 group-hover:text-orange-500 group-hover:border-orange-200 dark:group-hover:border-orange-500/50 transition-all">
                             <MessageSquare className="w-4 h-4 ml-0.5 mt-0.5" />
                           </button>
                         </div>
-                      ))}
+                      )) : <p className="text-sm text-slate-500">No tutors found.</p>}
                     </div>
                   </div>
                 </section>

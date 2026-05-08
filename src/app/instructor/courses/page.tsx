@@ -4,15 +4,28 @@ import { useState } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { Search, Plus, BookOpen, Users, Clock, Edit3, Trash2, Video, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { supabase } from "../../../lib/supabase";
 
 export default function InstructorCourses() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const courses = [
-    { id: 1, title: "UI/UX Design Masterclass", description: "Learn advanced UI/UX principles and practical application in Figma.", students: 45, status: "Active" },
-    { id: 2, title: "Visual Communication Basics", description: "Introduction to visual hierarchy, typography, and color theory.", students: 38, status: "Active" },
-  ];
+  const [courses, setCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        const parsedUser = JSON.parse(currentUser);
+        const { data } = await supabase.from("courses").select("*").eq("instructor_id", parsedUser.id).order("created_at", { ascending: false });
+        if (data) {
+          setCourses(data);
+        }
+      }
+    };
+    fetchCourses();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-muted/30 dark:bg-background">
@@ -52,7 +65,7 @@ export default function InstructorCourses() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
-            {courses.map((course) => (
+            {courses.length > 0 ? courses.map((course) => (
               <div key={course.id} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col gap-4 md:gap-6 group hover:border-primary transition-all shadow-sm">
                 <div className="flex gap-4 md:gap-6 items-start">
                   <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm shrink-0">
@@ -62,8 +75,8 @@ export default function InstructorCourses() {
                     <h4 className="text-lg md:text-xl font-black mb-1 md:mb-2">{course.title}</h4>
                     <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 line-clamp-2">{course.description}</p>
                     <div className="flex flex-wrap gap-2 md:gap-4 text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                      <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {course.students} Students</span>
-                      <span className="flex items-center gap-1.5 text-green-500 bg-green-500/10 px-2 py-1 rounded-md">{course.status}</span>
+                      <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> 0 Students</span>
+                      <span className="flex items-center gap-1.5 text-green-500 bg-green-500/10 px-2 py-1 rounded-md">{course.status || 'Active'}</span>
                     </div>
                   </div>
                 </div>
@@ -83,7 +96,7 @@ export default function InstructorCourses() {
                    </button>
                 </div>
               </div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No courses found.</p>}
           </div>
         </div>
       </main>

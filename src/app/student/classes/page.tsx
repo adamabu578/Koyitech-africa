@@ -9,24 +9,7 @@ import { supabase } from "../../../lib/supabase";
 export default function Classes() {
   const [classes, setClasses] = useState<any[]>([]);
 
-  const defaultClasses = [
-    {
-      course: "UI/UX Design Masterclass",
-      topic: "Prototyping in Figma",
-      tutor: "Sarah O.",
-      date: "Mon, April 24, 2026",
-      time: "10:00 AM - 12:00 PM (WAT)",
-      status: "Upcoming"
-    },
-    {
-      course: "Data Analysis Essentials",
-      topic: "Introduction to SQL",
-      tutor: "Mike J.",
-      date: "Tue, April 25, 2026",
-      time: "2:00 PM - 4:00 PM (WAT)",
-      status: "Upcoming"
-    }
-  ];
+
 
   const fetchClasses = async () => {
     const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
@@ -40,9 +23,9 @@ export default function Classes() {
         status: item.status,
         meeting_link: item.meeting_link
       }));
-      setClasses([...mapped, ...defaultClasses]);
+      setClasses(mapped);
     } else {
-      setClasses(defaultClasses);
+      setClasses([]);
     }
   };
 
@@ -66,7 +49,7 @@ export default function Classes() {
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-10">
           <h2 className="text-lg md:text-xl font-black mb-4 md:mb-6">Upcoming Live Classes</h2>
           <div className="grid md:grid-cols-2 gap-4 md:gap-8">
-            {classes.map((cls, index) => (
+            {classes.length > 0 ? classes.map((cls, index) => (
               <motion.div 
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -106,7 +89,7 @@ export default function Classes() {
                    </button>
                 </div>
               </motion.div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No scheduled classes.</p>}
           </div>
         </div>
       </main>

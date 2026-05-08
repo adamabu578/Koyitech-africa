@@ -11,16 +11,35 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
 
 export default function InstructorDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
-      setUser(JSON.parse(currentUser));
+      const parsedUser = JSON.parse(currentUser);
+      setUser(parsedUser);
+      const fetchData = async () => {
+        const [{ data: cData }, { data: sData }, { data: clData }, { data: aData }] = await Promise.all([
+          supabase.from('courses').select('*').eq('instructor_id', parsedUser.id),
+          supabase.from('profiles').select('*').eq('role', 'student'),
+          supabase.from('classes').select('*').eq('tutor_id', parsedUser.id),
+          supabase.from('assignments').select('*').eq('tutor_id', parsedUser.id)
+        ]);
+        if (cData) setCourses(cData);
+        if (sData) setStudents(sData);
+        if (clData) setClasses(clData);
+        if (aData) setAssignments(aData);
+      };
+      fetchData();
     } else {
       router.push("/login");
     }
@@ -29,11 +48,16 @@ export default function InstructorDashboard() {
   if (!user) return null;
 
   const stats = [
-    { label: "Assigned Courses", value: "3", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
-    { label: "Total Students", value: "158", icon: Users, color: "text-purple-500", bg: "bg-purple-500/10" },
-    { label: "Upcoming Classes", value: "4", icon: Calendar, color: "text-amber-500", bg: "bg-amber-500/10" },
-    { label: "Pending Assignments", value: "24", icon: CheckSquare, color: "text-rose-500", bg: "bg-rose-500/10" },
+    { label: "Assigned Courses", value: courses.length.toString(), icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Total Students", value: students.length.toString(), icon: Users, color: "text-purple-500", bg: "bg-purple-500/10" },
+    { label: "Upcoming Classes", value: classes.length.toString(), icon: Calendar, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Pending Assignments", value: assignments.length.toString(), icon: CheckSquare, color: "text-rose-500", bg: "bg-rose-500/10" },
   ];
+
+  const notifications = [
+    ...classes.map(c => ({ title: "Upcoming Class", desc: `${c.topic} starts soon`, time: c.date, type: "class" })),
+    ...assignments.map(a => ({ title: "New Assignment", desc: a.title, time: a.deadline, type: "assignment" }))
+  ].slice(0, 4);
 
   const quickActions = [
     { label: "Schedule a Class", icon: Calendar, path: "/instructor/classes", color: "bg-primary" },
@@ -135,10 +159,7 @@ export default function InstructorDashboard() {
                 </div>
                 
                 <div className="space-y-4 md:space-y-6">
-                   {[
-                     { title: "UI/UX Design Masterclass", students: 45, nextClass: "Today, 10:00 AM", status: "Active" },
-                     { title: "Visual Communication Basics", students: 38, nextClass: "Tomorrow, 02:00 PM", status: "Active" },
-                   ].map((course, i) => (
+                   {courses.length > 0 ? courses.map((course, i) => (
                       <div key={i} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col sm:flex-row flex-wrap sm:items-center justify-between gap-6 group hover:border-primary transition-all">
                          <div className="flex gap-4 md:gap-6 items-start sm:items-center w-full sm:w-auto">
                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-secondary/10 flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform shrink-0">
@@ -147,8 +168,8 @@ export default function InstructorDashboard() {
                             <div>
                                <h4 className="text-lg md:text-xl font-black mb-1 md:mb-2">{course.title}</h4>
                                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                                  <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {course.students} Students</span>
-                                  <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary" /> Next: {course.nextClass}</span>
+                                  <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {students.length} Students</span>
+                                  <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary" /> Duration: {course.duration || 'N/A'}</span>
                                </div>
                             </div>
                          </div>
@@ -156,12 +177,12 @@ export default function InstructorDashboard() {
                             <button className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all shrink-0">
                                <Edit3 size={20} />
                             </button>
-                            <button className="flex-1 sm:flex-none px-6 py-3 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20">
+                            <button onClick={() => router.push(`/instructor/courses/${course.id}`)} className="flex-1 sm:flex-none px-6 py-3 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20">
                                Manage Course
                             </button>
                          </div>
                       </div>
-                   ))}
+                   )) : <p className="text-sm text-muted-foreground">No active courses found.</p>}
                 </div>
              </div>
 
@@ -172,12 +193,7 @@ export default function InstructorDashboard() {
                 
                 <div className="bg-background rounded-[2rem] md:rounded-[2.5rem] border border-border overflow-hidden p-2">
                    <div className="space-y-2">
-                      {[
-                        { title: "New Student Assigned", desc: "Chidi A. joined UI/UX Masterclass", time: "2m ago", type: "student" },
-                        { title: "Assignment Submitted", desc: "Sarah O. submitted Landing Page Wireframe", time: "1h ago", type: "assignment" },
-                        { title: "Class Reminder", desc: "Visual Comm. Basics starts in 30 mins", time: "3h ago", type: "class" },
-                        { title: "Assignment Submitted", desc: "John D. submitted Mobile App Persona", time: "5h ago", type: "assignment" },
-                      ].map((notif, i) => (
+                      {notifications.length > 0 ? notifications.map((notif, i) => (
                          <div key={i} className="p-6 rounded-3xl hover:bg-muted/50 transition-all flex items-center justify-between gap-4 group">
                             <div className="flex gap-4 items-center">
                                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xl">
@@ -189,13 +205,13 @@ export default function InstructorDashboard() {
                                </div>
                             </div>
                             <div className="text-right flex flex-col items-end gap-2">
-                               <span className="text-[10px] font-black text-muted-foreground uppercase">{notif.time}</span>
+                               <span className="text-[10px] font-black text-muted-foreground uppercase">{notif.time || 'N/A'}</span>
                                <button className="w-8 h-8 rounded-lg bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
                                   <ChevronRight size={16} />
                                 </button>
                             </div>
                          </div>
-                      ))}
+                      )) : <p className="text-sm text-muted-foreground px-6 py-4">No recent notifications.</p>}
                    </div>
                    <button className="w-full py-4 mt-2 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5 rounded-2xl transition-all">
                       View All Notifications

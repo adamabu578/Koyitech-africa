@@ -10,12 +10,7 @@ export default function InstructorMaterials() {
   const [materials, setMaterials] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const defaultMaterials = [
-    { id: 1, name: "UI/UX Course Syllabus.pdf", size: "1.2 MB", course: "UI/UX Design Masterclass", dateAdded: "Oct 10, 2026", type: "PDF", title: "UI/UX Course Syllabus" },
-    { id: 2, name: "Color Theory Basics.pptx", size: "4.5 MB", course: "Visual Communication Basics", dateAdded: "Oct 12, 2026", type: "PPTX", title: "Color Theory Basics" },
-    { id: 3, name: "Figma Shortcuts Cheat Sheet.pdf", size: "0.8 MB", course: "UI/UX Design Masterclass", dateAdded: "Oct 15, 2026", type: "PDF", title: "Figma Shortcuts Cheat Sheet" },
-    { id: 4, name: "Design System Starter Kit.zip", size: "24.5 MB", course: "UI/UX Design Masterclass", dateAdded: "Oct 18, 2026", type: "ZIP", title: "Design System Starter Kit" },
-  ];
+
 
   const fetchMaterials = async () => {
     const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
@@ -31,9 +26,9 @@ export default function InstructorMaterials() {
         type: item.file_type,
         fileUrl: supabase.storage.from('materials').getPublicUrl(item.file_name).data.publicUrl
       }));
-      setMaterials([...mapped, ...defaultMaterials]);
+      setMaterials(mapped);
     } else {
-      setMaterials(defaultMaterials);
+      setMaterials([]);
     }
   };
 
@@ -195,7 +190,7 @@ export default function InstructorMaterials() {
              <div className="bg-background border border-border rounded-[2rem] p-4 md:p-6 lg:col-span-3">
                 <h3 className="text-base md:text-lg font-black mb-4">Recent Uploads</h3>
                 <div className="space-y-3 md:space-y-4">
-                   {materials.map((mat) => (
+                   {materials.length > 0 ? materials.map((mat) => (
                       <div key={mat.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-border transition-colors group gap-4">
                          <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
                             <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0">
@@ -225,7 +220,7 @@ export default function InstructorMaterials() {
                             </button>
                          </div>
                       </div>
-                   ))}
+                   )) : <p className="text-sm text-muted-foreground">No materials found.</p>}
                 </div>
              </div>
           </div>

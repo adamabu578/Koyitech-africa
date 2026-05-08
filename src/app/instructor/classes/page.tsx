@@ -18,24 +18,7 @@ export default function InstructorClasses() {
   const [time, setTime] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
 
-  const defaultClasses = [
-    {
-      course: "UI/UX Design Masterclass",
-      topic: "Prototyping in Figma",
-      tutor: "Current User",
-      date: "Mon, April 24, 2026",
-      time: "10:00 AM - 12:00 PM (WAT)",
-      status: "Upcoming"
-    },
-    {
-      course: "Data Analysis Essentials",
-      topic: "Introduction to SQL",
-      tutor: "Current User",
-      date: "Tue, April 25, 2026",
-      time: "2:00 PM - 4:00 PM (WAT)",
-      status: "Upcoming"
-    }
-  ];
+
 
   const fetchClasses = async () => {
     const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
@@ -49,9 +32,9 @@ export default function InstructorClasses() {
         status: item.status,
         meeting_link: item.meeting_link
       }));
-      setClasses([...mapped, ...defaultClasses]);
+      setClasses(mapped);
     } else {
-      setClasses(defaultClasses);
+      setClasses([]);
     }
   };
 
@@ -148,7 +131,7 @@ export default function InstructorClasses() {
             {/* Classes List Tab */}
             {activeTab === "classes" && (
               <div className="grid md:grid-cols-2 gap-4 md:gap-8">
-                {classes.map((cls, index) => (
+                {classes.length > 0 ? classes.map((cls, index) => (
                   <div 
                     key={index}
                     className="p-5 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-[2rem] flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-primary transition-all group"
@@ -182,7 +165,7 @@ export default function InstructorClasses() {
                        </div>
                     </div>
                   </div>
-                ))}
+                )) : <p className="text-sm text-muted-foreground col-span-2">No scheduled classes found.</p>}
               </div>
             )}
 

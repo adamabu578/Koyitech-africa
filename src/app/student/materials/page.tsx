@@ -9,29 +9,7 @@ import { supabase } from "../../../lib/supabase";
 export default function Materials() {
   const [materials, setMaterials] = useState<any[]>([]);
 
-  const defaultMaterials = [
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Module 3: Advanced UI Patterns",
-      type: "PDF",
-      size: "4.2 MB",
-      dateAdded: "April 20, 2026"
-    },
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Figma Component Library Asset",
-      type: "FIG",
-      size: "12.8 MB",
-      dateAdded: "April 18, 2026"
-    },
-    {
-      course: "Data Analysis Essentials",
-      title: "Week 1 Raw Dataset",
-      type: "CSV",
-      size: "1.1 MB",
-      dateAdded: "April 21, 2026"
-    }
-  ];
+
 
   const fetchMaterials = async () => {
     const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
@@ -44,9 +22,9 @@ export default function Materials() {
         dateAdded: new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         fileUrl: supabase.storage.from('materials').getPublicUrl(item.file_name).data.publicUrl
       }));
-      setMaterials([...mapped, ...defaultMaterials]);
+      setMaterials(mapped);
     } else {
-      setMaterials(defaultMaterials);
+      setMaterials([]);
     }
   };
 
@@ -69,7 +47,7 @@ export default function Materials() {
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8">
           <div className="grid gap-4">
-            {materials.map((mat, index) => (
+            {materials.length > 0 ? materials.map((mat, index) => (
               <motion.div 
                 key={index}
                 initial={{ opacity: 0, x: -10 }}
@@ -101,7 +79,7 @@ export default function Materials() {
                   <Download size={16} /> Download
                 </button>
               </motion.div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No materials found.</p>}
           </div>
         </div>
       </main>

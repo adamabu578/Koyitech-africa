@@ -10,29 +10,7 @@ import { supabase } from "../../../lib/supabase";
 export default function Assignments() {
   const [assignments, setAssignments] = useState<any[]>([]);
 
-  const defaultAssignments = [
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Landing Page Wireframing",
-      deadline: "May 2, 2026",
-      status: "Pending",
-      instruction: "Design a wireframe for a real estate landing page following the principles discussed in class."
-    },
-    {
-      course: "UI/UX Design Masterclass",
-      title: "Visual Style Guide",
-      deadline: "April 25, 2026",
-      status: "Completed",
-      instruction: "Create a comprehensive style guide including colors, typography, and button states."
-    },
-    {
-      course: "Data Analysis Essentials",
-      title: "Excel Data Cleaning",
-      deadline: "May 5, 2026",
-      status: "Pending",
-      instruction: "Clean the provided raw dataset using Excel formulas and pivot tables."
-    }
-  ];
+
 
   const fetchAssignments = async () => {
     const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
@@ -44,9 +22,9 @@ export default function Assignments() {
         status: item.status,
         instruction: item.instruction
       }));
-      setAssignments([...mapped, ...defaultAssignments]);
+      setAssignments(mapped);
     } else {
-      setAssignments(defaultAssignments);
+      setAssignments([]);
     }
   };
 
@@ -78,7 +56,7 @@ export default function Assignments() {
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-10">
           <div className="space-y-6">
-            {assignments.map((assign, index) => (
+            {assignments.length > 0 ? assignments.map((assign, index) => (
               <motion.div 
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -124,7 +102,7 @@ export default function Assignments() {
                   )}
                 </div>
               </motion.div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No assignments found.</p>}
           </div>
         </div>
       </main>
