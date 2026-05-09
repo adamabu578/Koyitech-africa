@@ -7,6 +7,7 @@ import { CourseCard } from "../components/CourseCard";
 import { User, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function CoursesPage() {
   const router = useRouter();
@@ -16,16 +17,36 @@ export default function CoursesPage() {
   useEffect(() => {
     // Attempt to parse out user profile & enrolled courses
     const users = JSON.parse(localStorage.getItem("users") || "[]");
+    let currentUserId = null;
     if (users.length > 0) {
       setUserType(users[0].userType || "student");
+      currentUserId = users[0].id;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    if (currentUser && currentUser.role) {
+       setUserType(currentUser.role === "instructor" ? "instructor" : "student");
+       currentUserId = currentUser.id;
     }
 
-    const existing = localStorage.getItem("enrolledCourses");
-    if (existing) {
-      try {
-        setEnrolledCourseIds(JSON.parse(existing));
-      } catch (err) {}
-    }
+    const fetchEnrollments = async () => {
+       let existingIds: string[] = [];
+       const existing = localStorage.getItem("enrolledCourses");
+       if (existing) {
+         try { existingIds = JSON.parse(existing); } catch (err) {}
+       }
+
+       if (currentUserId) {
+          const { data: enrollments } = await supabase.from('enrollments').select('course_id').eq('student_id', currentUserId);
+          if (enrollments) {
+             const dbEnrolledIds = enrollments.map(e => e.course_id);
+             existingIds = [...new Set([...existingIds, ...dbEnrolledIds])];
+          }
+       }
+       setEnrolledCourseIds(existingIds);
+    };
+
+    fetchEnrollments();
 
     const customCourses = JSON.parse(localStorage.getItem("createdCourses") || "[]");
     if (customCourses.length > 0) {

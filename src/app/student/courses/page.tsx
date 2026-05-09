@@ -28,7 +28,17 @@ export default function MyCourses() {
         { id: "11", title: "Web Development", duration: "12 Weeks", status: "Active" }
       ];
 
-      const enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+      let enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+      
+      if (currentUser && currentUser.id) {
+         const { data: enrollments } = await supabase.from("enrollments").select("course_id").eq("student_id", currentUser.id);
+         if (enrollments) {
+            const dbEnrolledIds = enrollments.map(e => e.course_id);
+            enrolledIds = [...new Set([...enrolledIds, ...dbEnrolledIds])];
+         }
+      }
+
       const { data } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
       
       const allCourses = [...(data || []), ...baseCourses];

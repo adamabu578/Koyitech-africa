@@ -29,13 +29,15 @@ export default function StudentDashboard() {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
       setUser(JSON.parse(currentUser));
+      const parsedUser = JSON.parse(currentUser);
       const fetchData = async () => {
-        const [{ data: cData }, { data: aData }, { data: clData }, { data: tData }, { data: sData }] = await Promise.all([
+        const [{ data: cData }, { data: aData }, { data: clData }, { data: tData }, { data: sData }, { data: enrollData }] = await Promise.all([
           supabase.from('courses').select('*'),
           supabase.from('assignments').select('*').eq('status', 'Pending'),
           supabase.from('classes').select('*').order('created_at', { ascending: false }).limit(5),
           supabase.from('profiles').select('*').eq('role', 'instructor').limit(5),
-          supabase.from('profiles').select('*').eq('role', 'student').limit(5)
+          supabase.from('profiles').select('*').eq('role', 'student').limit(5),
+          supabase.from('enrollments').select('course_id').eq('student_id', parsedUser.id)
         ]);
         const baseCourses = [
           { id: "1", title: "Geography Sensing & GIS", duration: "12 Weeks", status: "Active" },
@@ -51,7 +53,10 @@ export default function StudentDashboard() {
           { id: "11", title: "Web Development", duration: "12 Weeks", status: "Active" }
         ];
 
-        const enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+        const dbEnrolledIds = enrollData ? enrollData.map((e: any) => e.course_id) : [];
+        let enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+        enrolledIds = [...new Set([...enrolledIds, ...dbEnrolledIds])];
+        
         const allCourses = [...(cData || []), ...baseCourses];
         const enrolled = allCourses.filter(c => enrolledIds.includes(String(c.id)));
         
