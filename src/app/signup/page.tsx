@@ -119,7 +119,7 @@ export default function Signup() {
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -128,7 +128,7 @@ export default function Signup() {
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                   />
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function Signup() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                 />
               </div>
 
@@ -151,7 +151,7 @@ export default function Signup() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                   />
                   <button
                     type="button"
@@ -202,7 +202,7 @@ export default function Signup() {
                       placeholder="e.g. Digital marketing,graphic design,data analytics"
                       value={subjects}
                       onChange={(e) => setSubjects(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -212,7 +212,7 @@ export default function Signup() {
                       placeholder="e.g. 5"
                       value={experience}
                       onChange={(e) => setExperience(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -222,7 +222,7 @@ export default function Signup() {
                       rows={3}
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-500 resize-none"
                     />
                   </div>
                 </motion.div>
