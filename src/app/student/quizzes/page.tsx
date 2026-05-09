@@ -64,7 +64,7 @@ export default function Quizzes() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="p-5 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-[2.5rem] flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-primary transition-all group"
+                  className="p-5 sm:p-6 md:p-8 bg-background border border-border rounded-2xl md:rounded-[2.5rem] flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-primary transition-all group cursor-pointer"
                 >
                   <div>
                     <div className="flex justify-between items-start mb-6">

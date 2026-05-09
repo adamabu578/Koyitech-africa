@@ -77,7 +77,21 @@ export default function Payment() {
          return;
       }
       setIsLoading(true);
-      initializePayment({ onSuccess, onClose });
+      
+      // Temporary bypass to allow users to enroll for now
+      setTimeout(() => {
+         const existing = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+         if (!existing.includes(courseId)) {
+            existing.push(courseId);
+            localStorage.setItem("enrolledCourses", JSON.stringify(existing));
+         }
+         setIsLoading(false);
+         setSuccess(true);
+         toast.success("Enrolled successfully!");
+         setTimeout(() => {
+            router.push("/student/courses");
+         }, 2000);
+      }, 1000);
    };
 
    if (success) {

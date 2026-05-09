@@ -37,7 +37,25 @@ export default function StudentDashboard() {
           supabase.from('profiles').select('*').eq('role', 'instructor').limit(5),
           supabase.from('profiles').select('*').eq('role', 'student').limit(5)
         ]);
-        if (cData) setCourses(cData);
+        const baseCourses = [
+          { id: "1", title: "Geography Sensing & GIS", duration: "12 Weeks", status: "Active" },
+          { id: "2", title: "Social Media Management", duration: "12 Weeks", status: "Active" },
+          { id: "3", title: "Digital Marketing", duration: "12 Weeks", status: "Active" },
+          { id: "4", title: "Graphics Design", duration: "12 Weeks", status: "Active" },
+          { id: "5", title: "UI/UX Design", duration: "12 Weeks", status: "Active" },
+          { id: "6", title: "Data Analysis", duration: "12 Weeks", status: "Active" },
+          { id: "7", title: "Virtual Assistant / Remote Work", duration: "12 Weeks", status: "Active" },
+          { id: "8", title: "Cybersecurity", duration: "12 Weeks", status: "Active" },
+          { id: "9", title: "AI Productivity", duration: "12 Weeks", status: "Active" },
+          { id: "10", title: "Project Management", duration: "12 Weeks", status: "Active" },
+          { id: "11", title: "Web Development", duration: "12 Weeks", status: "Active" }
+        ];
+
+        const enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
+        const allCourses = [...(cData || []), ...baseCourses];
+        const enrolled = allCourses.filter(c => enrolledIds.includes(String(c.id)));
+        
+        setCourses(enrolled);
         if (aData) setAssignments(aData);
         if (clData) setClasses(clData);
         if (tData) setTutors(tData);

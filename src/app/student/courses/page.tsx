@@ -14,10 +14,27 @@ export default function MyCourses() {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      const baseCourses = [
+        { id: "1", title: "Geography Sensing & GIS", duration: "12 Weeks", status: "Active" },
+        { id: "2", title: "Social Media Management", duration: "12 Weeks", status: "Active" },
+        { id: "3", title: "Digital Marketing", duration: "12 Weeks", status: "Active" },
+        { id: "4", title: "Graphics Design", duration: "12 Weeks", status: "Active" },
+        { id: "5", title: "UI/UX Design", duration: "12 Weeks", status: "Active" },
+        { id: "6", title: "Data Analysis", duration: "12 Weeks", status: "Active" },
+        { id: "7", title: "Virtual Assistant / Remote Work", duration: "12 Weeks", status: "Active" },
+        { id: "8", title: "Cybersecurity", duration: "12 Weeks", status: "Active" },
+        { id: "9", title: "AI Productivity", duration: "12 Weeks", status: "Active" },
+        { id: "10", title: "Project Management", duration: "12 Weeks", status: "Active" },
+        { id: "11", title: "Web Development", duration: "12 Weeks", status: "Active" }
+      ];
+
+      const enrolledIds = JSON.parse(localStorage.getItem("enrolledCourses") || "[]");
       const { data } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
-      if (data) {
-        setCourses(data);
-      }
+      
+      const allCourses = [...(data || []), ...baseCourses];
+      const enrolled = allCourses.filter(c => enrolledIds.includes(String(c.id)));
+      
+      setCourses(enrolled);
     };
     fetchCourses();
   }, []);

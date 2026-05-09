@@ -186,7 +186,7 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {courses.map((course, i) => (
-              <div key={i} className="bg-white dark:bg-gray-900 border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all group flex flex-col hover:-translate-y-1">
+              <div key={i} className="bg-white dark:bg-gray-900 border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all group flex flex-col hover:-translate-y-1 cursor-pointer">
                 <div className="relative h-48 overflow-hidden">
                   <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute top-3 left-3 bg-[#5b4fff] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">

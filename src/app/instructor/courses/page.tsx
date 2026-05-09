@@ -66,7 +66,7 @@ export default function InstructorCourses() {
 
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
             {courses.length > 0 ? courses.map((course) => (
-              <div key={course.id} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col gap-4 md:gap-6 group hover:border-primary transition-all shadow-sm">
+              <div key={course.id} className="p-6 md:p-8 bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] flex flex-col gap-4 md:gap-6 group hover:border-primary transition-all shadow-sm cursor-pointer">
                 <div className="flex gap-4 md:gap-6 items-start">
                   <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm shrink-0">
                     <BookOpen className="w-6 h-6 md:w-8 md:h-8" />
