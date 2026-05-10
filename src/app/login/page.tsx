@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import { authApi } from "../../lib/auth";
 import { useTheme } from "next-themes";
 
 export default function Login() {
@@ -32,7 +33,7 @@ export default function Login() {
     }
     
     setIsLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await authApi.signIn({
       email,
       password,
     });

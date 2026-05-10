@@ -45,7 +45,11 @@ export default function InstructorLayout({ children }: { children: React.ReactNo
         setStatus(userStatus);
 
         // Update local storage to keep it in sync
-        localStorage.setItem("currentUser", JSON.stringify({ ...currentUser, status: userStatus }));
+        localStorage.setItem("currentUser", JSON.stringify({
+          ...currentUser,
+          status: userStatus,
+          role: profile?.role || currentUser.role
+        }));
 
         const isProfile = pathname === "/instructor/profile";
         if (userStatus === "pending" && !isProfile) {

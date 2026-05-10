@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabase";
+import { api } from "../../lib/api";
 import { toast } from "sonner";
 
 export default function InstructorDashboard() {
@@ -29,10 +29,10 @@ export default function InstructorDashboard() {
       setUser(parsedUser);
       const fetchData = async () => {
         const [{ data: cData }, { data: sData }, { data: clData }, { data: aData }] = await Promise.all([
-          supabase.from('courses').select('*').eq('instructor_id', parsedUser.id),
-          supabase.from('profiles').select('*').eq('role', 'student'),
-          supabase.from('classes').select('*').eq('tutor_id', parsedUser.id),
-          supabase.from('assignments').select('*').eq('tutor_id', parsedUser.id)
+          api.getCoursesByInstructor(parsedUser.id),
+          api.getProfilesByRole('student'),
+          api.getClassesByTutor(parsedUser.id),
+          api.getAssignmentsByTutor(parsedUser.id)
         ]);
         if (cData) setCourses(cData);
         if (sData) setStudents(sData);

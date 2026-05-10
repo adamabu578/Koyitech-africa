@@ -5,7 +5,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { Search, Plus, BookOpen, Users, Clock, Edit3, Trash2, Video, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function InstructorCourses() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function InstructorCourses() {
       const currentUser = localStorage.getItem("currentUser");
       if (currentUser) {
         const parsedUser = JSON.parse(currentUser);
-        const { data } = await supabase.from("courses").select("*").eq("instructor_id", parsedUser.id).order("created_at", { ascending: false });
+        const { data } = await api.getCoursesByInstructor(parsedUser.id);
         if (data) {
           setCourses(data);
         }

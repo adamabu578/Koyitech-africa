@@ -7,7 +7,7 @@ import { CourseCard } from "../components/CourseCard";
 import { User, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabase";
+import { api } from "../../lib/api";
 
 export default function CoursesPage() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function CoursesPage() {
        }
 
        if (currentUserId) {
-          const { data: enrollments } = await supabase.from('enrollments').select('course_id').eq('student_id', currentUserId);
+          const { data: enrollments } = await api.getStudentEnrollments(currentUserId);
           if (enrollments) {
              const dbEnrolledIds = enrollments.map(e => e.course_id);
              existingIds = [...new Set([...existingIds, ...dbEnrolledIds])];

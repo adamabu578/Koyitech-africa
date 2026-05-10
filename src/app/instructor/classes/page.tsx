@@ -6,7 +6,7 @@ import {
   Calendar, Plus, Clock, Video, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function InstructorClasses() {
   const [activeTab, setActiveTab] = useState("classes");
@@ -21,7 +21,7 @@ export default function InstructorClasses() {
 
 
   const fetchClasses = async () => {
-    const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getClasses();
     if (data) {
       const mapped = data.map((item: any) => ({
         course: item.course,
@@ -53,7 +53,7 @@ export default function InstructorClasses() {
     const dateObj = new Date(date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
-    const { data, error } = await supabase.from('classes').insert([
+    const { data, error } = await api.createClass(
       {
         course: "General Course",
         topic,
@@ -63,7 +63,7 @@ export default function InstructorClasses() {
         tutor_name: "Current User",
         meeting_link: meetingLink
       }
-    ]).select();
+    ).select();
 
     if (data && data.length > 0) {
       const newClass = {
@@ -120,7 +120,7 @@ export default function InstructorClasses() {
                   activeTab === tab.id 
                     ? "border-primary text-primary" 
                     : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+                })`}
               >
                 {tab.label}
               </button>

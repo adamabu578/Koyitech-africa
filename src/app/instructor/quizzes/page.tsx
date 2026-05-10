@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { PencilLine, Plus, Search, ChevronRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function InstructorQuizzes() {
   const [activeTab, setActiveTab] = useState("list");
@@ -27,10 +27,7 @@ export default function InstructorQuizzes() {
   const fetchQuizzes = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await api.getQuizzes();
         
       if (error) throw error;
       setQuizzes(data || []);
@@ -50,7 +47,7 @@ export default function InstructorQuizzes() {
         onClick: async () => {
           toast.dismiss("delete-confirm");
           try {
-            const { error } = await supabase.from('quizzes').delete().eq('id', id);
+            const { error } = await api.deleteQuiz(id);
             if (error) throw error;
             setQuizzes(prev => prev.filter(q => q.id !== id));
             toast.success("Quiz deleted.", { id: "delete-success" });
@@ -75,7 +72,7 @@ export default function InstructorQuizzes() {
     
     try {
       setIsSubmitting(true);
-      const { error } = await supabase.from('quizzes').insert([
+      const { error } = await api.createQuiz(
         {
           title,
           course,
@@ -87,7 +84,7 @@ export default function InstructorQuizzes() {
           duration: "10 mins",
           attempts: 0
         }
-      ]);
+      );
       
       if (error) throw error;
       
@@ -140,7 +137,7 @@ export default function InstructorQuizzes() {
                   activeTab === tab.id 
                     ? "border-primary text-primary" 
                     : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+                })`}
               >
                 {tab.label}
               </button>

@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { CheckSquare, Clock, Upload, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function Assignments() {
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -13,7 +13,7 @@ export default function Assignments() {
 
 
   const fetchAssignments = async () => {
-    const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getAssignments();
     if (data) {
       const mapped = data.map((item: any) => ({
         course: item.course,

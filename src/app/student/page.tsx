@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { supabase } from "../../lib/supabase";
+import { api } from "../../lib/api";
 
 import { toast } from "sonner";
 
@@ -32,12 +32,12 @@ export default function StudentDashboard() {
       const parsedUser = JSON.parse(currentUser);
       const fetchData = async () => {
         const [{ data: cData }, { data: aData }, { data: clData }, { data: tData }, { data: sData }, { data: enrollData }] = await Promise.all([
-          supabase.from('courses').select('*'),
-          supabase.from('assignments').select('*').eq('status', 'Pending'),
-          supabase.from('classes').select('*').order('created_at', { ascending: false }).limit(5),
-          supabase.from('profiles').select('*').eq('role', 'instructor').limit(5),
-          supabase.from('profiles').select('*').eq('role', 'student').limit(5),
-          supabase.from('enrollments').select('course_id').eq('student_id', parsedUser.id)
+          api.getAllCourses(),
+          api.getPendingAssignments(),
+          api.getClasses(5),
+          api.getProfilesByRole('instructor', 5),
+          api.getProfilesByRole('student', 5),
+          api.getStudentEnrollments(parsedUser.id)
         ]);
         const baseCourses = [
           { id: "1", title: "Geography Sensing & GIS", duration: "12 Weeks", status: "Active" },

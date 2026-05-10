@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { Calendar, Clock, Video } from "lucide-react";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function Classes() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -12,7 +12,7 @@ export default function Classes() {
 
 
   const fetchClasses = async () => {
-    const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getClasses();
     if (data) {
       const mapped = data.map((item: any) => ({
         course: item.course,

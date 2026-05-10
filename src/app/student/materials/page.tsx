@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { FileText, Download, FileArchive } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function Materials() {
   const [materials, setMaterials] = useState<any[]>([]);
@@ -12,7 +13,7 @@ export default function Materials() {
 
 
   const fetchMaterials = async () => {
-    const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getMaterials();
     if (data) {
       const mapped = data.map((item: any) => ({
         course: item.course,

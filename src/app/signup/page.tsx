@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import { authApi } from "../../lib/auth";
 
 export default function Signup() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function Signup() {
     let finalRole = role;
     if (email.includes("admin")) finalRole = "admin";
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await authApi.signUp({
       email,
       password,
       options: {

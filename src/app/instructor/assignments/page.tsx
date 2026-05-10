@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function InstructorAssignments() {
   const [activeTab, setActiveTab] = useState("assignments");
@@ -22,7 +23,7 @@ export default function InstructorAssignments() {
 
 
   const fetchAssignments = async () => {
-    const { data, error } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getAssignments();
     if (data) {
       const mapped = data.map((item: any) => ({
         id: item.id,
@@ -77,7 +78,7 @@ export default function InstructorAssignments() {
 
     if (!file) toast.loading("Publishing assignment...");
 
-    const { data, error } = await supabase.from('assignments').insert([
+    const { data, error } = await api.createAssignment(
       {
         title,
         course: "General Course",
@@ -88,7 +89,7 @@ export default function InstructorAssignments() {
         file_name: fileName,
         file_url: fileUrl
       }
-    ]).select();
+    ).select();
 
     toast.dismiss();
 
@@ -141,7 +142,7 @@ export default function InstructorAssignments() {
             const fileName = urlParts[urlParts.length - 1];
             await supabase.storage.from('assignments').remove([fileName]);
           }
-          const { error } = await supabase.from('assignments').delete().eq('id', id);
+          const { error } = await api.deleteAssignment(id);
           toast.dismiss(loadingId);
           
           if (error) {
@@ -194,7 +195,7 @@ export default function InstructorAssignments() {
                 className={`flex items-center gap-2 px-4 md:px-6 py-4 font-bold text-xs md:text-sm uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${activeTab === tab.id
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
+                  })`}
               >
                 {tab.label}
               </button>

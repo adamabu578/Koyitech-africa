@@ -5,7 +5,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { BookOpen, Clock, ChevronRight, PlayCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function MyCourses() {
   const router = useRouter();
@@ -32,14 +32,14 @@ export default function MyCourses() {
       const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
       
       if (currentUser && currentUser.id) {
-         const { data: enrollments } = await supabase.from("enrollments").select("course_id").eq("student_id", currentUser.id);
+         const { data: enrollments } = await api.getStudentEnrollments(currentUser.id);
          if (enrollments) {
             const dbEnrolledIds = enrollments.map(e => e.course_id);
             enrolledIds = [...new Set([...enrolledIds, ...dbEnrolledIds])];
          }
       }
 
-      const { data } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
+      const { data } = await api.getAllCourses();
       
       const allCourses = [...(data || []), ...baseCourses];
       const enrolled = allCourses.filter(c => enrolledIds.includes(String(c.id)));

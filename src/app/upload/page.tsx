@@ -8,7 +8,7 @@ import { Button } from "../components/Button";
 import { Upload, FileText, X, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "../../lib/supabase";
+import { api } from "../../lib/api";
 
 export default function UploadMaterial() {
   const router = useRouter();
@@ -253,7 +253,7 @@ export default function UploadMaterial() {
 
                       const type = file.name.split('.').pop()?.toUpperCase() || 'FILE';
 
-                      const { error: dbError } = await supabase.from('materials').insert([
+                      const { error: dbError } = await api.createMaterials([
                         {
                           title: title ? `${title} - ${file.name}` : file.name,
                           file_name: storageName,
@@ -272,7 +272,7 @@ export default function UploadMaterial() {
                     }
 
                     if (selectedFiles.length === 0 && title) {
-                       const { error: dbError } = await supabase.from('materials').insert([
+                       const { error: dbError } = await api.createMaterials([
                         {
                           title: title,
                           file_name: title + ".doc",

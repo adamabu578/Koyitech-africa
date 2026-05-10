@@ -6,7 +6,7 @@ import { CreditCard, ArrowLeft, Lock, CheckCircle2, Mail, ShieldCheck, Zap } fro
 import { useState, useEffect } from "react";
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "sonner";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function Payment() {
    const router = useRouter();
@@ -84,9 +84,7 @@ export default function Payment() {
          // Insert into Supabase
          const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
          if (currentUser && currentUser.id) {
-            const { error } = await supabase.from('enrollments').insert([
-               { student_id: currentUser.id, course_id: courseId }
-            ]);
+            const { error } = await api.enrollStudent(currentUser.id, courseId); 
             if (error && error.code !== '23505') { // Ignore unique constraint errors
                console.error("Error saving enrollment to DB:", error);
             }

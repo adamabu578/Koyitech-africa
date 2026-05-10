@@ -10,7 +10,7 @@ import {
   Upload, Target
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -52,7 +52,7 @@ export default function CourseDetails() {
         { id: "11", title: "Web Development", duration: "12 Weeks", description: "Build the internet." }
       ];
 
-      const { data: dbCourse } = await supabase.from('courses').select('*').eq('id', id).single();
+      const { data: dbCourse } = await api.getCourseById(id as string);
       let currentCourse = null;
 
       if (dbCourse) {
@@ -78,10 +78,10 @@ export default function CourseDetails() {
          setCourse(currentCourse);
 
          const [{ data: cData }, { data: mData }, { data: aData }, { data: qData }] = await Promise.all([
-            supabase.from('classes').select('*').order('created_at', { ascending: false }),
-            supabase.from('materials').select('*').order('created_at', { ascending: false }),
-            supabase.from('assignments').select('*').order('created_at', { ascending: false }),
-            supabase.from('quizzes').select('*').order('created_at', { ascending: false })
+            api.getClasses(),
+            api.getMaterials(),
+            api.getAssignments(),
+            api.getQuizzes()
          ]);
 
          if (cData) setClasses(cData);
@@ -92,7 +92,7 @@ export default function CourseDetails() {
                type: item.file_type,
                size: item.file_size,
                dateAdded: new Date(item.created_at).toLocaleDateString(),
-               fileUrl: supabase.storage.from('materials').getPublicUrl(item.file_name).data?.publicUrl
+               fileUrl: api.getMaterialPublicUrl(item.file_name)
             })));
          }
          if (aData) setAssignments(aData);

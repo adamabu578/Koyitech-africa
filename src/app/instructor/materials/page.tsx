@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { FileText, Search, Upload, Download, MoreVertical, BookOpen, FileArchive, Trash2 } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 import { toast } from "sonner";
 
 export default function InstructorMaterials() {
@@ -13,7 +14,7 @@ export default function InstructorMaterials() {
 
 
   const fetchMaterials = async () => {
-    const { data, error } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
+    const { data, error } = await api.getMaterials();
     if (data) {
       // Map to frontend expected format
       const mapped = data.map((item: any) => ({
@@ -61,7 +62,7 @@ export default function InstructorMaterials() {
         
       const fileUrl = publicUrlData.publicUrl;
       
-      const { data, error } = await supabase.from('materials').insert([
+      const { data, error } = await api.createMaterials([
         {
           title: file.name,
           file_name: fileName,
@@ -114,7 +115,7 @@ export default function InstructorMaterials() {
           if (fileName) {
             await supabase.storage.from('materials').remove([fileName]);
           }
-          const { error } = await supabase.from('materials').delete().eq('id', id);
+          const { error } = await api.deleteMaterial(id);
           toast.dismiss(loadingId);
           
           if (error) {

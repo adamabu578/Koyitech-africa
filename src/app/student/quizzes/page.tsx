@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Sidebar } from "../../components/Sidebar";
 import { HelpCircle, Clock, Award, Star } from "lucide-react";
 import { useState, useEffect } from "react";
-import { supabase } from "../../../lib/supabase";
+import { api } from "../../../lib/api";
 
 export default function Quizzes() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
@@ -17,10 +17,7 @@ export default function Quizzes() {
   const fetchQuizzes = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await api.getQuizzes();
         
       if (error) throw error;
       setQuizzes(data || []);
