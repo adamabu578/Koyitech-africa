@@ -9,6 +9,7 @@ import { Upload, FileText, X, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "../../lib/api";
+import { supabase } from "../../lib/supabase";
 
 export default function UploadMaterial() {
   const router = useRouter();
