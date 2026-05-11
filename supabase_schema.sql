@@ -144,6 +144,12 @@ create policy "Courses viewable by everyone." on public.courses for select using
 drop policy if exists "Courses insertable by authenticated users." on public.courses;
 create policy "Courses insertable by authenticated users." on public.courses for insert with check (auth.role() = 'authenticated');
 
+drop policy if exists "Courses updatable by authenticated users." on public.courses;
+create policy "Courses updatable by authenticated users." on public.courses for update using (auth.role() = 'authenticated');
+
+drop policy if exists "Courses deletable by authenticated users." on public.courses;
+create policy "Courses deletable by authenticated users." on public.courses for delete using (auth.role() = 'authenticated');
+
 drop policy if exists "Reports viewable by authenticated users." on public.reports;
 create policy "Reports viewable by authenticated users." on public.reports for select using (auth.role() = 'authenticated');
 
