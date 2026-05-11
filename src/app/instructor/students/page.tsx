@@ -1,18 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { Users, Search, ChevronRight, MessageSquare, BookOpen, Star } from "lucide-react";
+import { api } from "../../../lib/api";
 
 export default function InstructorStudents() {
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState("All Courses");
 
-  const students = [
-    { id: 1, name: "Chidi Anuoluwapo", course: "UI/UX Design Masterclass", progress: 75, assignments: "4/5", performance: "Excellent" },
-    { id: 2, name: "Sarah Osei", course: "Visual Communication Basics", progress: 40, assignments: "2/5", performance: "Average" },
-    { id: 3, name: "Blessing Emmanuel", course: "UI/UX Design Masterclass", progress: 90, assignments: "5/5", performance: "Outstanding" },
-    { id: 4, name: "John Doe", course: "Visual Communication Basics", progress: 15, assignments: "1/5", performance: "Needs Attention" },
-  ];
+  const uniqueCourses = Array.from(new Set(students.map(s => s.course)));
+
+  const filteredStudents = students.filter(s => {
+    if (selectedCourseFilter === "All Courses") return true;
+    return s.course === selectedCourseFilter;
+  });
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const currentUser = localStorage.getItem("currentUser");
+      if (currentUser) {
+        const parsedUser = JSON.parse(currentUser);
+        const { data } = await api.getInstructorStudents(parsedUser.id);
+        if (data) {
+          setStudents(data);
+        }
+      }
+    };
+    fetchStudents();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-muted/30 dark:bg-background">
@@ -82,10 +99,15 @@ export default function InstructorStudents() {
                     className="w-full pl-10 md:pl-12 pr-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
                   />
                 </div>
-                <select className="w-full sm:w-auto px-4 py-3 rounded-xl bg-muted/50 border-none outline-none text-sm font-bold text-foreground">
-                  <option>All Courses</option>
-                  <option>UI/UX Design</option>
-                  <option>Visual Comm.</option>
+                <select 
+                  value={selectedCourseFilter}
+                  onChange={(e) => setSelectedCourseFilter(e.target.value)}
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl bg-muted/50 border-none outline-none text-sm font-bold text-foreground"
+                >
+                  <option value="All Courses">All Courses</option>
+                  {uniqueCourses.map((course, idx) => (
+                    <option key={idx} value={course}>{course}</option>
+                  ))}
                 </select>
               </div>
 
@@ -100,12 +122,12 @@ export default function InstructorStudents() {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student) => (
+                    {filteredStudents.length > 0 ? filteredStudents.map((student) => (
                       <tr key={student.id} className="border-b border-border hover:bg-muted/20 transition-colors group">
                         <td className="p-4 md:p-6">
                            <div className="flex items-center gap-3 md:gap-4">
                               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                                 {student.name.split(' ').map(n => n[0]).join('')}
+                                 {student.name.split(' ').map((n: string) => n[0]).join('')}
                               </div>
                               <span className="font-bold text-sm md:text-base">{student.name}</span>
                            </div>
@@ -128,7 +150,13 @@ export default function InstructorStudents() {
                            </button>
                         </td>
                       </tr>
-                    ))}
+                    )) : (
+                      <tr>
+                        <td colSpan={4} className="p-8 text-center text-muted-foreground text-sm">
+                          No students found for this course.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

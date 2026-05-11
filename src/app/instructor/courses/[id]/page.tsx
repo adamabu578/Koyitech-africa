@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "../../../components/Sidebar";
 import { 
   BookOpen, Users, Video, FileText, Calendar, 
@@ -8,15 +8,75 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { api } from "../../../../lib/api";
+import { supabase } from "../../../../lib/supabase";
 
 export default function InstructorCourseDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
 
+  const [courseId, setCourseId] = useState<string>("");
+  const [recordings, setRecordings] = useState<any[]>([]);
+
+  useEffect(() => {
+    params.then(p => {
+      setCourseId(p.id);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (courseId) {
+      const fetchRecordings = async () => {
+        const { data } = await api.getRecordingsByCourse(courseId);
+        if (data) setRecordings(data);
+      };
+      fetchRecordings();
+    }
+  }, [courseId]);
+
   // Form states
   const [classDate, setClassDate] = useState("");
   const [classTime, setClassTime] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
+
+  const handleUploadRecording = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !courseId) return;
+
+    toast.loading("Uploading recording...");
+    const storageName = `${Date.now()}_${file.name}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('materials')
+      .upload(storageName, file);
+
+    if (uploadError) {
+      toast.dismiss();
+      toast.error("Failed to upload recording.");
+      return;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('materials')
+      .getPublicUrl(storageName);
+
+    const fileUrl = publicUrlData.publicUrl;
+
+    const { data, error } = await api.createRecording({
+      course_id: courseId,
+      title: file.name,
+      video_url: fileUrl
+    }).select();
+
+    toast.dismiss();
+
+    if (error) {
+      toast.error("Failed to save recording details.");
+    } else if (data) {
+      toast.success("Recording uploaded successfully!");
+      setRecordings([data[0], ...recordings]);
+    }
+  };
 
   const handleScheduleClass = (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,24 +246,34 @@ export default function InstructorCourseDetail({ params }: { params: Promise<{ i
                   </div>
                   <h3 className="text-xl md:text-2xl font-black tracking-tight mb-2">Upload Recorded Lessons</h3>
                   <p className="text-xs md:text-sm text-muted-foreground max-w-md mb-6 md:mb-8">Upload class recordings for students to revisit anytime.</p>
-                  <button className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 md:py-4 bg-primary text-white rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                  <label className="cursor-pointer flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 md:py-4 bg-primary text-white rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
                     <Upload size={18} />
                     Upload Video
-                  </button>
+                    <input 
+                      type="file" 
+                      accept="video/*" 
+                      className="hidden" 
+                      onChange={handleUploadRecording} 
+                    />
+                  </label>
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                   {[1, 2, 3].map((i) => (
-                      <div key={i} className="bg-background border border-border rounded-2xl overflow-hidden group">
-                         <div className="aspect-video bg-muted relative flex items-center justify-center group-hover:bg-primary/5 transition-colors cursor-pointer">
+                   {recordings.length > 0 ? recordings.map((rec, i) => (
+                      <div key={rec.id || i} className="bg-background border border-border rounded-2xl overflow-hidden group">
+                         <a href={rec.video_url} target="_blank" rel="noreferrer" className="aspect-video bg-muted relative flex items-center justify-center group-hover:bg-primary/5 transition-colors cursor-pointer block">
                             <Play className="w-12 h-12 text-muted-foreground group-hover:text-primary transition-colors" />
-                         </div>
+                         </a>
                          <div className="p-4">
-                            <h4 className="font-bold mb-1">Session {i}: Typography Deep Dive</h4>
-                            <p className="text-xs text-muted-foreground font-medium">Uploaded 2 days ago • 1h 24m</p>
+                            <h4 className="font-bold mb-1 truncate" title={rec.title}>{rec.title}</h4>
+                            <p className="text-xs text-muted-foreground font-medium">
+                              Uploaded {new Date(rec.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </p>
                          </div>
                       </div>
-                   ))}
+                   )) : (
+                     <p className="text-sm text-muted-foreground col-span-full text-center py-8">No recordings uploaded yet.</p>
+                   )}
                 </div>
               </div>
             )}
