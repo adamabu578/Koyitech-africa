@@ -30,11 +30,17 @@ export const api = {
   createClass: (classData: any) => supabase.from('classes').insert([classData]),
 
   // ---------- ASSIGNMENTS ----------
-  getAssignments: () => supabase.from('assignments').select('*').order('created_at', { ascending: false }),
+  getAssignments: () => supabase.from('assignments').select('*, assignment_submissions(count)').order('created_at', { ascending: false }),
   getPendingAssignments: () => supabase.from('assignments').select('*').eq('status', 'Pending'),
   getAssignmentsByTutor: (tutorId: string) => supabase.from('assignments').select('*').eq('tutor_id', tutorId),
   createAssignment: (assignmentData: any) => supabase.from('assignments').insert([assignmentData]),
   deleteAssignment: (id: string) => supabase.from('assignments').delete().eq('id', id),
+  
+  // ---------- SUBMISSIONS ----------
+  submitAssignment: (submissionData: any) => supabase.from('assignment_submissions').upsert([submissionData]),
+  getStudentSubmissions: (studentId: string) => supabase.from('assignment_submissions').select('*').eq('student_id', studentId),
+  getAssignmentSubmissions: (assignmentId: string) => supabase.from('assignment_submissions').select('*, profiles(first_name, last_name, email)').eq('assignment_id', assignmentId),
+  updateSubmission: (id: string, updateData: any) => supabase.from('assignment_submissions').update(updateData).eq('id', id),
 
   // ---------- MATERIALS ----------
   getMaterials: () => supabase.from('materials').select('*').order('created_at', { ascending: false }),
@@ -52,26 +58,68 @@ export const api = {
 
   // ---------- INSTRUCTOR STUDENTS ----------
   getInstructorStudents: async (instructorId: string) => {
-    const { data: courses } = await supabase.from('courses').select('id, title').eq('instructor_id', instructorId);
-    if (!courses || courses.length === 0) return { data: [] };
-    const courseIds = courses.map(c => c.id);
+    // 1. Fetch instructor profile to get their subjects
+    const { data: profile } = await supabase.from('profiles').select('subjects').eq('id', instructorId).single();
+    const instructorSubjects = profile?.subjects 
+      ? profile.subjects.toLowerCase().split(',').map((s: string) => s.trim()) 
+      : [];
 
+    // 2. Combine base courses and DB courses to find matching course IDs
+    const baseCourses = [
+      { id: "1", title: "Geography Sensing & GIS" },
+      { id: "2", title: "Social Media Management" },
+      { id: "3", title: "Digital Marketing" },
+      { id: "4", title: "Graphics Design" },
+      { id: "5", title: "UI/UX Design" },
+      { id: "6", title: "Data Analysis" },
+      { id: "7", title: "Virtual Assistant / Remote Work" },
+      { id: "8", title: "Cybersecurity" },
+      { id: "9", title: "AI Productivity" },
+      { id: "10", title: "Project Management" },
+      { id: "11", title: "Web Development" }
+    ];
+    
+    const { data: dbCourses } = await supabase.from('courses').select('id, title, instructor_id');
+    const allCourses = [...(dbCourses || []), ...baseCourses];
+    
+    let matchingCourseIds: string[] = [];
+    
+    if (instructorSubjects.length > 0) {
+      // Find courses matching instructor's subjects dynamically
+      const matchingCourses = allCourses.filter(c => 
+        instructorSubjects.some((sub: string) => 
+          c.title.toLowerCase().includes(sub) || 
+          sub.includes(c.title.toLowerCase()) ||
+          (sub.includes('data analytic') && c.title.toLowerCase().includes('data analy'))
+        )
+      );
+      matchingCourseIds = matchingCourses.map(c => String(c.id));
+    } else {
+      // Fallback: courses created by the instructor
+      const fallbackCourses = allCourses.filter(c => (c as any).instructor_id === instructorId);
+      matchingCourseIds = fallbackCourses.map(c => String(c.id));
+    }
+
+    if (matchingCourseIds.length === 0) return { data: [] };
+
+    // 3. Get enrollments for matching course IDs
     const { data: enrollments, error: enrollError } = await supabase.from('enrollments')
       .select('*')
-      .in('course_id', courseIds);
+      .in('course_id', matchingCourseIds);
 
     if (enrollError || !enrollments || enrollments.length === 0) return { data: [] };
 
+    // 4. Get student profiles
     const studentIds = enrollments.map(e => e.student_id);
     const { data: profiles } = await supabase.from('profiles').select('*').in('id', studentIds);
 
     const mapped = enrollments.map(enrollment => {
       const student = profiles?.find(p => p.id === enrollment.student_id);
-      const course = courses.find(c => c.id === enrollment.course_id);
+      const course = allCourses.find(c => String(c.id) === String(enrollment.course_id));
       return {
         id: enrollment.id,
         student_id: enrollment.student_id,
-        name: student?.full_name || student?.username || 'Unknown Student',
+        name: student?.first_name ? `${student.first_name} ${student.last_name || ''}` : (student?.email || 'Unknown Student'),
         course: course?.title || 'Unknown Course',
         progress: enrollment.progress || 0,
         assignments: '0/0',

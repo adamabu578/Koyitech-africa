@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import {
   CheckSquare, Plus, FileText, ChevronRight,
-  MessageSquare, Star, Upload, Trash2
+  MessageSquare, Star, Upload, Trash2, Download
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "../../../lib/supabase";
@@ -20,20 +20,81 @@ export default function InstructorAssignments() {
   const [deadline, setDeadline] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
+  // Submissions State
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
+  const [activeAssignmentId, setActiveAssignmentId] = useState<string | null>(null);
+  const [grade, setGrade] = useState("");
+  const [feedback, setFeedback] = useState("");
 
+  const fetchSubmissions = async (assignmentId: string) => {
+    toast.loading("Loading submissions...", { id: "loading-subs" });
+    const { data } = await api.getAssignmentSubmissions(assignmentId);
+    toast.dismiss("loading-subs");
+    if (data) {
+       setSubmissions(data);
+       setSelectedSubmission(data[0] || null);
+       if (data[0]) {
+         setGrade(data[0].grade?.toString() || "");
+         setFeedback(data[0].feedback || "");
+       } else {
+         setGrade("");
+         setFeedback("");
+       }
+    } else {
+       setSubmissions([]);
+       setSelectedSubmission(null);
+       setGrade("");
+       setFeedback("");
+    }
+  };
 
+  const handleSelectSubmission = (sub: any) => {
+    setSelectedSubmission(sub);
+    setGrade(sub.grade?.toString() || "");
+    setFeedback(sub.feedback || "");
+  };
+
+  const handleSubmitReview = async () => {
+    if (!selectedSubmission) return;
+    toast.loading("Submitting review...", { id: "review" });
+    const { error } = await api.updateSubmission(selectedSubmission.id, {
+      grade: grade ? parseInt(grade) : null,
+      feedback: feedback
+    });
+    
+    if (error) {
+      toast.dismiss("review");
+      toast.error("Failed to submit review");
+      return;
+    }
+    
+    const updated = submissions.map(s => s.id === selectedSubmission.id ? { ...s, grade: grade ? parseInt(grade) : null, feedback } : s);
+    setSubmissions(updated);
+    setSelectedSubmission({ ...selectedSubmission, grade: grade ? parseInt(grade) : null, feedback });
+    
+    toast.dismiss("review");
+    toast.success("Review submitted!");
+  };
   const fetchAssignments = async () => {
     const { data, error } = await api.getAssignments();
     if (data) {
-      const mapped = data.map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        course: item.course,
-        deadline: new Date(item.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        submissions: item.submissions_count,
-        status: item.status,
-        instruction: item.instruction
-      }));
+      const mapped = data.map((item: any) => {
+        let count = item.submissions_count || 0;
+        if (item.assignment_submissions && item.assignment_submissions.length > 0) {
+          count = item.assignment_submissions[0].count;
+        }
+        return {
+          id: item.id,
+          title: item.title,
+          course: item.course,
+          deadline: new Date(item.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          submissions: count,
+          status: item.status,
+          instruction: item.instruction,
+          fileUrl: item.file_url
+        };
+      });
       setAssignments(mapped);
     } else {
       setAssignments([]);
@@ -238,7 +299,11 @@ export default function InstructorAssignments() {
                           <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
                         </button>
                         <button
-                          onClick={() => setActiveTab("submissions")}
+                          onClick={() => {
+                            setActiveAssignmentId(assignment.id);
+                            setActiveTab("submissions");
+                            fetchSubmissions(assignment.id);
+                          }}
                           className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-xl flex items-center justify-center text-foreground hover:bg-primary/10 hover:text-primary transition-colors shrink-0"
                           title="View Submissions"
                         >
@@ -312,73 +377,95 @@ export default function InstructorAssignments() {
             {/* Submissions Tab */}
             {activeTab === "submissions" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                <div className="space-y-4">
-                  <h3 className="text-lg md:text-xl font-black mb-4">Pending Reviews</h3>
-                  {[
-                    { name: "Chidi A.", task: "Landing Page Wireframe", date: "2m ago" },
-                    { name: "Sarah O.", task: "Landing Page Wireframe", date: "1h ago" },
-                  ].map((sub, i) => (
-                    <div key={i} className="p-4 md:p-6 bg-background rounded-2xl md:rounded-3xl border border-border hover:border-primary transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer group gap-4">
-                      <div className="flex gap-4 items-center w-full sm:w-auto">
-                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary text-xs md:text-sm shrink-0">
-                          {sub.name.split(' ').map(n => n[0]).join('')}
+                {activeAssignmentId ? (
+                  <>
+                    <div className="space-y-4">
+                      <h3 className="text-lg md:text-xl font-black mb-4">Pending Reviews</h3>
+                      {submissions.length > 0 ? submissions.map((sub, i) => (
+                        <div key={i} onClick={() => handleSelectSubmission(sub)} className={`p-4 md:p-6 bg-background rounded-2xl md:rounded-3xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer group gap-4 ${selectedSubmission?.id === sub.id ? 'border-primary shadow-lg shadow-primary/5' : 'border-border hover:border-primary'}`}>
+                          <div className="flex gap-4 items-center w-full sm:w-auto">
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary text-xs md:text-sm shrink-0 uppercase">
+                              {(sub.profiles?.first_name?.[0] || '') + (sub.profiles?.last_name?.[0] || '')}
+                            </div>
+                            <div>
+                              <p className="font-bold text-sm">{sub.profiles?.first_name} {sub.profiles?.last_name}</p>
+                              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tight line-clamp-1">{sub.file_name}</p>
+                            </div>
+                          </div>
+                          <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${sub.grade ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
+                            {sub.grade ? `Grade: ${sub.grade}` : 'Pending'}
+                          </span>
                         </div>
-                        <div>
-                          <p className="font-bold text-sm">{sub.name}</p>
-                          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tight line-clamp-1">{sub.task}</p>
+                      )) : <p className="text-sm text-muted-foreground">No submissions yet for this assignment.</p>}
+                    </div>
+
+                    {selectedSubmission ? (
+                      <div className="bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8">
+                        <div className="flex items-center gap-4 mb-6 md:mb-8">
+                          <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary text-lg md:text-xl shrink-0 uppercase">
+                            {(selectedSubmission.profiles?.first_name?.[0] || '') + (selectedSubmission.profiles?.last_name?.[0] || '')}
+                          </div>
+                          <div>
+                            <h3 className="text-lg md:text-xl font-black">{selectedSubmission.profiles?.first_name} {selectedSubmission.profiles?.last_name}</h3>
+                            <p className="text-xs md:text-sm text-muted-foreground font-medium line-clamp-1">{selectedSubmission.file_name}</p>
+                          </div>
+                        </div>
+
+                        <div className="bg-muted/50 rounded-2xl p-4 md:p-6 mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
+                            <FileText className="text-primary shrink-0" />
+                            <span className="font-bold text-xs md:text-sm truncate">{selectedSubmission.file_name}</span>
+                          </div>
+                          <a href={selectedSubmission.file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary hover:underline shrink-0 flex items-center gap-1">
+                            Download <Download size={14} />
+                          </a>
+                        </div>
+
+                        <div className="space-y-4 md:space-y-6">
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm font-bold text-muted-foreground">Grade (0-100)</label>
+                            <input
+                              type="number"
+                              value={grade}
+                              onChange={(e) => setGrade(e.target.value)}
+                              placeholder="e.g. 85"
+                              className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium text-sm md:text-base"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm font-bold text-muted-foreground">Feedback</label>
+                            <textarea
+                              rows={4}
+                              value={feedback}
+                              onChange={(e) => setFeedback(e.target.value)}
+                              placeholder="Write feedback for student..."
+                              className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium resize-none text-sm md:text-base"
+                            />
+                          </div>
+                          <button
+                            onClick={handleSubmitReview}
+                            className="w-full py-3.5 md:py-4 bg-primary text-white rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+                          >
+                            Submit Review
+                          </button>
                         </div>
                       </div>
-                      <span className="text-[10px] font-black text-muted-foreground uppercase">{sub.date}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8">
-                  <div className="flex items-center gap-4 mb-6 md:mb-8">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary text-lg md:text-xl shrink-0">
-                      CA
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-black">Chidi A.</h3>
-                      <p className="text-xs md:text-sm text-muted-foreground font-medium line-clamp-1">Landing Page Wireframe</p>
-                    </div>
+                    ) : (
+                      <div className="bg-background border border-border rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 flex items-center justify-center text-muted-foreground font-bold">
+                        Select a submission to review
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="col-span-1 lg:col-span-2 bg-background border border-border rounded-[2rem] p-10 flex flex-col items-center justify-center text-center">
+                     <FileText size={48} className="text-muted-foreground/30 mb-4" />
+                     <h3 className="text-xl font-black mb-2">No Assignment Selected</h3>
+                     <p className="text-muted-foreground font-medium max-w-md">Please select an assignment from the "All Assignments" tab to view its submissions.</p>
+                     <button onClick={() => setActiveTab("assignments")} className="mt-6 px-6 py-3 bg-muted hover:bg-primary/10 text-foreground hover:text-primary rounded-xl font-bold uppercase tracking-widest text-xs transition-colors">
+                       View Assignments
+                     </button>
                   </div>
-
-                  <div className="bg-muted/50 rounded-2xl p-4 md:p-6 mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
-                      <FileText className="text-primary shrink-0" />
-                      <span className="font-bold text-xs md:text-sm truncate">chidi_wireframe_v1.fig</span>
-                    </div>
-                    <button className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary hover:underline shrink-0">
-                      View Submission
-                    </button>
-                  </div>
-
-                  <div className="space-y-4 md:space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-xs md:text-sm font-bold text-muted-foreground">Grade (0-100)</label>
-                      <input
-                        type="number"
-                        placeholder="e.g. 85"
-                        className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium text-sm md:text-base"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs md:text-sm font-bold text-muted-foreground">Feedback</label>
-                      <textarea
-                        rows={4}
-                        placeholder="Write feedback for student..."
-                        className="w-full px-4 py-3 rounded-xl bg-muted/50 border-none outline-none focus:ring-2 focus:ring-primary/20 text-foreground font-medium resize-none text-sm md:text-base"
-                      />
-                    </div>
-                    <button
-                      onClick={() => toast.success("Review submitted!")}
-                      className="w-full py-3.5 md:py-4 bg-primary text-white rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
-                    >
-                      Submit Review
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>

@@ -7,8 +7,12 @@ create table if not exists public.profiles (
   email text unique,
   status text default 'active',
   role text check (role in ('student', 'instructor', 'admin')) default 'student',
+  subjects text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Force add missing columns just in case the table was created earlier without them
+alter table public.profiles add column if not exists subjects text;
 
 -- Create materials table
 create table if not exists public.materials (
@@ -137,6 +141,53 @@ create table if not exists public.reports (
 alter table public.courses enable row level security;
 alter table public.reports enable row level security;
 
+-- Create enrollments table
+create table if not exists public.enrollments (
+  id uuid default gen_random_uuid() primary key,
+  student_id uuid references public.profiles(id) on delete cascade,
+  course_id text not null,
+  progress integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.enrollments enable row level security;
+
+drop policy if exists "Enrollments viewable by authenticated users." on public.enrollments;
+create policy "Enrollments viewable by authenticated users." on public.enrollments for select using (auth.role() = 'authenticated');
+
+drop policy if exists "Enrollments insertable by authenticated users." on public.enrollments;
+create policy "Enrollments insertable by authenticated users." on public.enrollments for insert with check (auth.role() = 'authenticated');
+
+drop policy if exists "Enrollments updatable by authenticated users." on public.enrollments;
+create policy "Enrollments updatable by authenticated users." on public.enrollments for update using (auth.role() = 'authenticated');
+
+drop policy if exists "Enrollments deletable by authenticated users." on public.enrollments;
+create policy "Enrollments deletable by authenticated users." on public.enrollments for delete using (auth.role() = 'authenticated');
+
+-- Create assignment_submissions table
+create table if not exists public.assignment_submissions (
+  id uuid default gen_random_uuid() primary key,
+  assignment_id uuid references public.assignments(id) on delete cascade,
+  student_id uuid references public.profiles(id) on delete cascade,
+  file_name text not null,
+  file_url text not null,
+  grade integer,
+  feedback text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique(assignment_id, student_id)
+);
+
+alter table public.assignment_submissions enable row level security;
+
+drop policy if exists "Submissions viewable by authenticated users." on public.assignment_submissions;
+create policy "Submissions viewable by authenticated users." on public.assignment_submissions for select using (auth.role() = 'authenticated');
+
+drop policy if exists "Submissions insertable by authenticated users." on public.assignment_submissions;
+create policy "Submissions insertable by authenticated users." on public.assignment_submissions for insert with check (auth.role() = 'authenticated');
+
+drop policy if exists "Submissions updatable by authenticated users." on public.assignment_submissions;
+create policy "Submissions updatable by authenticated users." on public.assignment_submissions for update using (auth.role() = 'authenticated');
+
 -- Setup RLS Policies for courses and reports
 drop policy if exists "Courses viewable by everyone." on public.courses;
 create policy "Courses viewable by everyone." on public.courses for select using (true);
@@ -173,14 +224,15 @@ create policy "Auth Insert Assignments" on storage.objects for insert with check
 create or replace function public.handle_new_user() 
 returns trigger as $$
 begin
-  insert into public.profiles (id, email, first_name, last_name, role, status)
+  insert into public.profiles (id, email, first_name, last_name, role, status, subjects)
   values (
     new.id, 
     new.email, 
     new.raw_user_meta_data->>'firstName', 
     new.raw_user_meta_data->>'lastName',
     coalesce(new.raw_user_meta_data->>'role', 'student'),
-    case when coalesce(new.raw_user_meta_data->>'role', 'student') = 'instructor' then 'pending' else 'active' end
+    case when coalesce(new.raw_user_meta_data->>'role', 'student') = 'instructor' then 'pending' else 'active' end,
+    new.raw_user_meta_data->>'subjects'
   )
   on conflict (id) do nothing;
   return new;
